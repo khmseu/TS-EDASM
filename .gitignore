@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+.DS_Store
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Test outputs
+*.obj
+*.obj.lst
+*.out
+a.out
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# ProDOS attribute dotfiles (optional - uncomment to ignore)
+# .*
+# !.gitignore
+# !.github/
+
+vendor/
