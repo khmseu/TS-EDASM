@@ -101,7 +101,7 @@ export function pass2(
     }
   }
   
-  let objectCode = new Uint8Array(buffer.data);
+  let objectCode: Uint8Array = new Uint8Array(buffer.data);
   const listing = options.listing ? listingLines.join('\n') : undefined;
   
   // If relocatable, encode as REL format

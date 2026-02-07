@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { assemble } from '../src/assembler';
 import { link } from '../src/linker';
-import type { AssemblyOptions } from '../src/assembler/types';
+import type { AssemblyOptions } from '../src/assembler';
 
 describe('Golden Tests - Instructions', () => {
   it('should assemble all addressing modes correctly', () => {
@@ -488,8 +488,8 @@ DATA  DB $42
 
     const result = assemble(source, { origin: 0x8000, relocatable: true });
     console.log('Assembly result:', result);
-    if (result.artifacts?.bytes) {
-      console.log('Assembled bytes:', Array.from(result.artifacts.bytes).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
+    if (result.artifacts?.objectBytes) {
+      console.log('Assembled bytes:', Array.from(result.artifacts.objectBytes).map((b: number) => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
     }
     if (result.artifacts?.objectBytes) {
       console.log('Object bytes length:', result.artifacts.objectBytes.length);

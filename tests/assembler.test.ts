@@ -15,11 +15,11 @@ START LDA #$42
     expect(result.artifacts).toBeDefined();
     
     if (result.artifacts) {
-      expect(result.artifacts.objectBytes.length).toBeGreaterThan(0);
+      expect(result.artifacts.objectBytes!.length).toBeGreaterThan(0);
       // LDA #$42 = A9 42, RTS = 60
-      expect(result.artifacts.objectBytes[0]).toBe(0xA9);
-      expect(result.artifacts.objectBytes[1]).toBe(0x42);
-      expect(result.artifacts.objectBytes[2]).toBe(0x60);
+      expect(result.artifacts.objectBytes![0]).toBe(0xA9);
+      expect(result.artifacts.objectBytes![1]).toBe(0x42);
+      expect(result.artifacts.objectBytes![2]).toBe(0x60);
     }
   });
   
@@ -60,11 +60,11 @@ DATA  DB $01,$02,$03
     
     expect(result.ok).toBe(true);
     if (result.artifacts) {
-      expect(result.artifacts.objectBytes[0]).toBe(0x01);
-      expect(result.artifacts.objectBytes[1]).toBe(0x02);
-      expect(result.artifacts.objectBytes[2]).toBe(0x03);
-      expect(result.artifacts.objectBytes[3]).toBe(0x34); // Low byte of $1234
-      expect(result.artifacts.objectBytes[4]).toBe(0x12); // High byte
+      expect(result.artifacts.objectBytes![0]).toBe(0x01);
+      expect(result.artifacts.objectBytes![1]).toBe(0x02);
+      expect(result.artifacts.objectBytes![2]).toBe(0x03);
+      expect(result.artifacts.objectBytes![3]).toBe(0x34); // Low byte of $1234
+      expect(result.artifacts.objectBytes![4]).toBe(0x12); // High byte
     }
   });
 });

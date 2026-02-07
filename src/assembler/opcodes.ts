@@ -48,7 +48,7 @@ export interface OpcodeDef {
 //  bit 0: abs
 
 // Opcode byte values from ASM1.S OpcodeT table
-const OPCODE_TABLE: Record<string, Record<AddressingMode, number>> = {
+const OPCODE_TABLE: Record<string, Partial<Record<AddressingMode, number>>> = {
   ADC: {
     [AddressingMode.ABSOLUTE]: 0x6D,
     [AddressingMode.ZERO_PAGE]: 0x65,
