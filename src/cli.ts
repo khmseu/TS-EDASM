@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { readFile, writeFile } from 'fs/promises';
-import path from 'path';
+import { readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import { assemble, link } from './index.js';
 import { writeProDOSAttributes } from './io/prodosAttributes.js';
 

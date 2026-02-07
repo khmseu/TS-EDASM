@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Test runner that writes detailed output to log files
 
-import fs from 'fs';
-import path from 'path';
-import { spawn } from 'child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawn } from 'node:child_process';
 
 // Create logs directory
 const logsDir = './test_logs';
