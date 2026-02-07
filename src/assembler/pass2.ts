@@ -266,9 +266,9 @@ function generateInstruction(
     const value = operandValue.value!;
     
     if (mode === AddressingMode.RELATIVE) {
-      // Branch offset: target - (PC + 1) for 2-byte instructions
-      // The +1 accounts for the offset byte itself
-      const offset = value - (buffer.pc + 1);
+      // Branch offset: target - (PC + 2)
+      // 6502 branches are relative to PC after fetching both opcode and offset bytes
+      const offset = value - (buffer.pc + 2);
       if (offset < -128 || offset > 127) {
         return { error: `Branch out of range: ${offset}` };
       }

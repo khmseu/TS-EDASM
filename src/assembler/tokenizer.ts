@@ -288,6 +288,15 @@ export function parseLine(line: string, lineNumber: number): SourceLine {
     }
   } else {
     cleanLine = cleanLine.trimStart();
+    // Special case: if line has form "LABEL EQU value" with leading space,
+    // treat first word as label, EQU as mnemonic
+    const equMatch = cleanLine.match(/^([A-Za-z_\.][A-Za-z0-9_\.]*)\s+EQU\s+(.+)$/i);
+    if (equMatch) {
+      result.label = equMatch[1];
+      result.mnemonic = 'EQU';
+      result.operand = equMatch[2];
+      return result;
+    }
   }
   
   // Mnemonic/directive
