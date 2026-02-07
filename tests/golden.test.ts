@@ -151,6 +151,9 @@ START BEQ START
     `;
 
     const result = assemble(source, { origin: 0x1000 });
+    if (!result.ok) {
+      console.error('Assembly errors:', result.errors);
+    }
     expect(result.ok).toBe(true);
     expect(result.artifacts?.objectBytes).toBeDefined();
     expect(result.artifacts!.objectBytes!.length).toBeGreaterThan(50);
@@ -179,6 +182,9 @@ START BEQ START
     `;
 
     const result = assemble(source, { origin: 0x2000, cpu: '65C02' });
+    if (!result.ok) {
+      console.error('65C02 errors:', result.errors);
+    }
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
@@ -315,9 +321,11 @@ LOOP  DEX
     if (!result.ok) return;
 
     const code = result.artifacts!.objectBytes!;
-    // BNE LOOP (should branch back 2 bytes)
+    console.log('Code bytes:', Array.from(code).map((b, i) => `$C${(0x000 + i).toString(16).toUpperCase().padStart(3, '0')}: ${b.toString(16).toUpperCase().padStart(2, '0')}`).join(', '));
+    // BNE LOOP (should branch back 3 bytes from next instruction)
+    // PC after BNE is $C005, target is $C002, so offset is -3
     expect(code[3]).toBe(0xD0); // BNE
-    expect(code[4]).toBe(0xFE); // -2 (branch offset)
+    expect(code[4]).toBe(0xFD); // -3 (branch offset)
   });
 
   it('should handle local labels', () => {
@@ -330,6 +338,9 @@ MAIN  LDX #10
     `;
 
     const result = assemble(source, { origin: 0x5000 });
+    if (!result.ok) {
+      console.error('Local labels errors:', result.errors);
+    }
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
@@ -429,6 +440,12 @@ SUB2  LDA #$42
     const result1 = assemble(mod1, { origin: 0x8000, relocatable: true });
     const result2 = assemble(mod2, { origin: 0x8000, relocatable: true });
 
+    if (!result1.ok) {
+      console.error('Module 1 errors:', result1.errors);
+    }
+    if (!result2.ok) {
+      console.error('Module 2 errors:', result2.errors);
+    }
     expect(result1.ok).toBe(true);
     expect(result2.ok).toBe(true);
     
@@ -470,15 +487,24 @@ DATA  DB $42
     `;
 
     const result = assemble(source, { origin: 0x8000, relocatable: true });
+    console.log('Assembly result:', result);
+    if (result.artifacts?.bytes) {
+      console.log('Assembled bytes:', Array.from(result.artifacts.bytes).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
+    }
+    if (result.artifacts?.objectBytes) {
+      console.log('Object bytes length:', result.artifacts.objectBytes.length);
+    }
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
     // Link at different address
     const linkResult = link([result.artifacts!.objectBytes!], { origin: 0x9000 });
+    console.log('Link result:', linkResult);
     expect(linkResult.ok).toBe(true);
     
     if (!linkResult.ok) return;
     const code = linkResult.artifacts!.executable!;
+    console.log('Linked code:', Array.from(code).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
     
     // LDA absolute should reference relocated DATA
     expect(code[0]).toBe(0xAD); // LDA absolute

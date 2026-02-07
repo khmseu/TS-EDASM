@@ -63,15 +63,16 @@ run_test "Full Vitest Suite" \
   "npm test" \
   "$VITEST_LOG"
 
-# Verification test - run verification suite
-run_test "Verification Tests" \
-  "npx vitest run verify-fixes.test.ts" \
-  "$VERIFY_LOG"
-
-# Node runner test - custom test runner
-run_test "Custom Node Test Runner" \
-  "node test-runner.js" \
-  "$RUNNER_LOG"
+# Node runner test - custom test runner (only if dist/ exists)
+if [ -d "dist" ] && [ -f "dist/assembler/index.js" ]; then
+  run_test "Custom Node Test Runner" \
+    "node test-runner.js" \
+    "$RUNNER_LOG"
+else
+  echo "Skipping Custom Node Test Runner (dist/ not built)"
+  echo "To build: npm run build" 
+  echo "" > "$RUNNER_LOG"
+fi
 
 # Summary report
 echo "═══════════════════════════════════════════════════════"

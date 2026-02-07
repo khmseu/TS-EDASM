@@ -50,6 +50,23 @@ export class SymbolTable {
     }
   }
   
+  defineExternal(name: string): void {
+    const key = name.toUpperCase();
+    const existing = this.symbols.get(key);
+    
+    if (existing && existing.defined && !(existing.flags & SymbolFlags.EXTERNAL)) {
+      throw new Error(`Symbol ${name} already defined as non-external`);
+    }
+    
+    // Mark as external - value will be resolved by linker
+    this.symbols.set(key, {
+      name: key,
+      value: 0,
+      flags: SymbolFlags.EXTERNAL,
+      defined: true // Mark as defined so it doesn't cause "undefined" errors
+    });
+  }
+  
   reference(name: string): Symbol {
     const key = name.toUpperCase();
     let symbol = this.symbols.get(key);

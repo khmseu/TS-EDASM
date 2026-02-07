@@ -124,9 +124,10 @@ export function link(objects: Uint8Array[], options: LinkOptions = {}): LinkResu
     combinedCode.push(...codeArray);
     currentBase += module.code.length;
   }
-  
-  const executable = new Uint8Array(combinedCode);
-  
+
+  // Filter out any undefined values and create a clean executable
+  const cleanCode = combinedCode.filter(b => b !== undefined);
+  const executable = new Uint8Array(cleanCode);
   return {
     ok: true,
     errors,

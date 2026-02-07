@@ -236,7 +236,7 @@ const OPCODE_TABLE: Record<string, Record<AddressingMode, number>> = {
   },
   SEC: { [AddressingMode.IMPLIED]: 0x38 },
   SED: { [AddressingMode.IMPLIED]: 0xF8 },
-  SE: { [AddressingMode.IMPLIED]: 0x78 },
+  SEI: { [AddressingMode.IMPLIED]: 0x78 },
   STA: {
     [AddressingMode.ABSOLUTE]: 0x8D,
     [AddressingMode.ZERO_PAGE]: 0x85,

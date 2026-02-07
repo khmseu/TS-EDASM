@@ -38,6 +38,15 @@ log('');
 
 async function runTests() {
   try {
+    // Check if dist exists
+    const fs = require('fs');
+    if (!fs.existsSync('./dist/assembler/index.js')) {
+      log('✗ ERROR: dist/assembler/index.js not found');
+      log('Please build the project first: npm run build');
+      summary('ERROR: Project not built. Run: npm run build');
+      process.exit(1);
+    }
+    
     log('Importing modules...');
     const { assemble } = require('./dist/assembler/index.js');
     log('✓ Modules imported successfully');

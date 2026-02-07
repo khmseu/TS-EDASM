@@ -24,19 +24,75 @@ export interface RELObject {
 export function parseREL(data: Uint8Array): RELObject {
   let pos = 0;
   
-  // Read header (2-byte placeholder at start)
+  // Read header (2-byte code length)
   const codeLength = data[pos] | (data[pos + 1] << 8);
   pos += 2;
   
   const code = data.slice(pos, pos + codeLength);
   pos += codeLength;
   
-  // Parse relocation dictionary and symbol table
-  // (Simplified for now - full implementation requires parsing RLD format)
+  // Parse relocation dictionary (RLD)
   const relocations: RelocationEntry[] = [];
-  const symbols = new Map<string, number>();
   const entryPoints: string[] = [];
   const externalRefs: string[] = [];
+  const symbols = new Map<string, number>();
+  
+  // Parse relocation entries
+  while (pos < data.length) {
+    const typeByte = data[pos];
+    
+    // Check for end of relocations (typically indicated by 0x00)
+    if (typeByte === 0x00) {
+      pos++;
+      // Now parse symbol table
+      while (pos < data.length) {
+        // Read DCI string (high bit set on last char)
+        const nameChars: number[] = [];
+        while (pos < data.length) {
+          const ch = data[pos++];
+          nameChars.push(ch & 0x7F);
+          if (ch & 0x80) break; // Last character
+        }
+        
+        if (nameChars.length === 0) break;
+        
+        const name = String.fromCharCode(...nameChars);
+        
+        if (pos + 3 <= data.length) {
+          const flags = data[pos++];
+          const value = data[pos] | (data[pos + 1] << 8);
+          pos += 2;
+          
+          symbols.set(name, value);
+        }
+      }
+      break;
+    }
+    
+    // Parse relocation entry
+    const offset = data[pos + 1] | (data[pos + 2] << 8);
+    pos += 3;
+    
+    const isWord = (typeByte & 0x80) !== 0;
+    const isRelative = (typeByte & 0x40) !== 0;
+    const isExternal = (typeByte & 0x01) !== 0;
+    
+    let symbol: string | undefined;
+    if (isExternal) {
+      // Read symbol name (length-prefixed)
+      const nameLen = data[pos++];
+      const nameBytes = data.slice(pos, pos + nameLen);
+      symbol = String.fromCharCode(...nameBytes);
+      pos += nameLen;
+    }
+    
+    relocations.push({
+      offset,
+      type: isWord ? 'word' : 'byte',
+      symbol,
+      relative: isRelative
+    });
+  }
   
   return {
     header: { codeLength, entryPoints, externalRefs },

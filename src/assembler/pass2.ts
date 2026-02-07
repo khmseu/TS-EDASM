@@ -5,6 +5,7 @@ import { SymbolTable } from './symbols';
 import { type SourceLine } from './tokenizer';
 import { ExpressionEvaluator } from './expressions';
 import { lookupOpcode, getInstructionSize, AddressingMode } from './opcodes';
+import { buildREL, type RelocationEntry } from '../linker/relformat';
 
 export interface Pass2Options {
   listing?: boolean;
@@ -23,6 +24,7 @@ interface CodeBuffer {
   data: number[];
   pc: number;
   origin: number;
+  relocations: RelocationEntry[];  // Track relocation entries
 }
 
 export function pass2(
@@ -33,16 +35,24 @@ export function pass2(
   const buffer: CodeBuffer = {
     data: [],
     pc: 0,
-    origin: 0
+    origin: 0,
+    relocations: []
   };
   
   const errors: string[] = [];
   const warnings: string[] = [];
   const listingLines: string[] = [];
   const evaluator = new ExpressionEvaluator(symbols);
+  let lastGlobalLabel = '';
   
   for (const line of lines) {
     let listingLine = '';
+    
+    // Track global labels for local label resolution
+    if (line.label && !line.label.startsWith('.')) {
+      lastGlobalLabel = line.label;
+      evaluator.setLastGlobalLabel(lastGlobalLabel);
+    }
     
     // Set current PC for evaluator (used for * in expressions)
     evaluator.setCurrentPC(buffer.pc);
@@ -74,7 +84,7 @@ export function pass2(
     }
     
     // Handle instructions
-    const result = generateInstruction(buffer, line, mnem, evaluator);
+    const result = generateInstruction(buffer, line, mnem, evaluator, options);
     
     if (result.error) {
       errors.push(`Line ${line.lineNumber}: ${result.error}`);
@@ -91,8 +101,22 @@ export function pass2(
     }
   }
   
-  const objectCode = new Uint8Array(buffer.data);
+  let objectCode = new Uint8Array(buffer.data);
   const listing = options.listing ? listingLines.join('\n') : undefined;
+  
+  // If relocatable, encode as REL format
+  if (options.relocatable) {
+    objectCode = buildREL({
+      header: {
+        codeLength: buffer.data.length,
+        entryPoints: [],
+        externalRefs: []
+      },
+      code: objectCode,
+      relocations: buffer.relocations,
+      symbols: new Map()
+    });
+  }
   
   // Define the special '*' symbol to be the current PC
   symbols.define('*', buffer.pc, true);
@@ -106,7 +130,7 @@ export function pass2(
 }
 
 function isDirective(mnem: string): boolean {
-  const directives = ['ORG', 'EQU', 'DB', 'DFB', 'DW', 'DA', 'ASC', 'DCI', 'DS', 'END'];
+  const directives = ['ORG', 'EQU', 'DB', 'DFB', 'DW', 'DA', 'ASC', 'DCI', 'DS', 'END', 'REL', 'EXT', 'ENT', 'CHN'];
   return directives.includes(mnem);
 }
 
@@ -215,6 +239,14 @@ function processDirective(
       }
       break;
     }
+    
+    case 'REL':
+    case 'ENT':
+    case 'EXT':
+    case 'CHN':
+    case 'END':
+      // Linker directives - don't generate code
+      break;
   }
   
   return generated;
@@ -229,12 +261,13 @@ function generateInstruction(
   buffer: CodeBuffer,
   line: SourceLine,
   mnemonic: string,
-  evaluator: ExpressionEvaluator
+  evaluator: ExpressionEvaluator,
+  options: Pass2Options = {}
 ): InstructionResult {
   const operand = line.operand || '';
   
   // Check if this is a branch instruction - these ALWAYS use relative addressing
-  const branchMnemonics = /^(BEQ|BNE|BCC|BCS|BMI|BPL|BVC|BVS)$/i;
+  const branchMnemonics = /^(BEQ|BNE|BCC|BCS|BMI|BPL|BVC|BVS|BRA)$/i;
   let mode: AddressingMode | null;
   
   if (branchMnemonics.test(mnemonic)) {
@@ -263,7 +296,7 @@ function generateInstruction(
       return { error: operandValue.error };
     }
     
-    const value = operandValue.value!;
+    let value = operandValue.value!;
     
     if (mode === AddressingMode.RELATIVE) {
       // Branch offset: target - (PC + 2)
@@ -274,14 +307,66 @@ function generateInstruction(
       }
       bytes.push(offset & 0xFF);
     } else if (size === 2) {
+      // In relocatable mode, convert absolute address to offset
+      if (options.relocatable && isSymbolReference(operand)) {
+        value = value - buffer.origin;
+      }
       bytes.push(value & 0xFF);
+      
+      // Track relocation for relocatable mode (byte operand)
+      if (options.relocatable && isSymbolReference(operand)) {
+        buffer.relocations.push({
+          offset: buffer.pc + 1 - buffer.origin,  // Offset of operand byte (relative to code start)
+          type: 'byte',
+          relative: false
+        });
+      }
     } else if (size === 3) {
+      // In relocatable mode, convert absolute address to offset
+      if (options.relocatable && isSymbolReference(operand)) {
+        value = value - buffer.origin;
+      }
       bytes.push(value & 0xFF);
       bytes.push((value >> 8) & 0xFF);
+      
+      // Track relocation for relocatable mode (word operand)
+      if (options.relocatable && isSymbolReference(operand)) {
+        buffer.relocations.push({
+          offset: buffer.pc + 1 - buffer.origin,  // Offset of operand word (relative to code start)
+          type: 'word',
+          relative: false
+        });
+      }
     }
   }
   
   return { bytes };
+}
+
+function isSymbolReference(operand: string): boolean {
+  // Strip away addressing mode syntax to get the core operand
+  let op = operand.trim();
+  
+  // Remove immediate, indirect, indexed syntax
+  op = op.replace(/^#/, '');         // Immediate
+  op = op.replace(/^\(|\)$/g, '');   // Indirect
+  op = op.replace(/,\s*[XY]$/i, ''); // Indexed
+  op = op.replace(/,\s*Y\)$/i, '');  // (zp),Y
+  op = op.trim();
+  
+  // Check if it looks like a symbol (starts with letter/underscore)
+  // and is not a numeric literal
+  if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(op)) {
+    return true;
+  }
+  
+  // Check for expressions containing symbols (e.g., "ADDR+1")
+  // If it contains any letters, it likely references a symbol
+  if (/[A-Za-z_]/.test(op)) {
+    return true;
+  }
+  
+  return false;
 }
 
 function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator, mnemonic: string = ''): AddressingMode | null {
@@ -291,10 +376,23 @@ function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator
   if (op === 'A') return AddressingMode.ACCUMULATOR;
   if (op.startsWith('#')) return AddressingMode.IMMEDIATE;
   
-  if (op.match(/^\([^)]+,X\)$/i)) return AddressingMode.INDIRECT_X;
+  if (op.match(/^\([^)]+,X\)$/i)) {
+    // Could be INDIRECT_X (indexed indirect) or INDIRECT_ABS_X (JMP ($xxxx,X) for 65C02)
+    const expr = op.replace(/^\(|,X\)$/gi, '').trim();
+    const result = evaluator.evaluate(expr);
+    if (!result.undefined && result.value >= 0x100 && mnemonic.toUpperCase() === 'JMP') {
+      return AddressingMode.INDIRECT_ABS_X;
+    }
+    return AddressingMode.INDIRECT_X;
+  }
   if (op.match(/^\([^)]+\),Y$/i)) return AddressingMode.INDIRECT_Y;
   if (op.match(/^\([^)]+\)$/)) {
-    // Could be INDIRECT or INDIRECT_ZP
+    // Could be INDIRECT (JMP) or INDIRECT_ZP (65C02 LDA/STA)
+    const expr = op.replace(/^\(|\)$/g, '').trim();
+    const result = evaluator.evaluate(expr);
+    if (!result.undefined && result.value < 0x100) {
+      return AddressingMode.INDIRECT_ZP;
+    }
     return AddressingMode.INDIRECT;
   }
   
@@ -302,7 +400,8 @@ function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator
     // Determine if zero page or absolute
     const expr = op.replace(/,X$/i, '').trim();
     const result = evaluator.evaluate(expr);
-    if (!result.undefined && result.value < 0x100) {
+    // External symbols should always use absolute addressing
+    if (!result.undefined && result.value < 0x100 && !result.external) {
       return AddressingMode.ZERO_PAGE_X;
     }
     return AddressingMode.ABSOLUTE_X;
@@ -311,7 +410,8 @@ function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator
   if (op.match(/,Y$/i)) {
     const expr = op.replace(/,Y$/i, '').trim();
     const result = evaluator.evaluate(expr);
-    if (!result.undefined && result.value < 0x100) {
+    // External symbols should always use absolute addressing
+    if (!result.undefined && result.value < 0x100 && !result.external) {
       return AddressingMode.ZERO_PAGE_Y;
     }
     return AddressingMode.ABSOLUTE_Y;
@@ -319,7 +419,8 @@ function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator
   
   // Absolute or zero page
   const result = evaluator.evaluate(op);
-  if (!result.undefined && result.value < 0x100) {
+  // External symbols should always use absolute addressing
+  if (!result.undefined && result.value < 0x100 && !result.external) {
     return AddressingMode.ZERO_PAGE;
   }
   
@@ -327,7 +428,7 @@ function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator
 }
 
 // List of branch mnemonics that use relative addressing
-const BRANCH_MNEMONICS = ['BEQ', 'BNE', 'BCC', 'BCS', 'BMI', 'BPL', 'BVC', 'BVS'];
+const BRANCH_MNEMONICS = ['BEQ', 'BNE', 'BCC', 'BCS', 'BMI', 'BPL', 'BVC', 'BVS', 'BRA'];
 
 function isBranchInstruction(mnemonic: string): boolean {
   return BRANCH_MNEMONICS.includes(mnemonic.toUpperCase());
@@ -347,8 +448,11 @@ function extractOperandValue(
     expr = expr.replace(/^\(|\,X\)$/gi, '');
   } else if (mode === AddressingMode.INDIRECT_Y) {
     expr = expr.replace(/^\(|\),Y$/gi, '');
-  } else if (mode === AddressingMode.INDIRECT || mode === AddressingMode.INDIRECT_ZP) {
+  } else if (mode === AddressingMode.INDIRECT || mode === AddressingMode.INDIRECT_ZP || mode === AddressingMode.INDIRECT_ABS_X) {
     expr = expr.replace(/^\(|\)$/g, '');
+    if (mode === AddressingMode.INDIRECT_ABS_X) {
+      expr = expr.replace(/,X$/i, '');
+    }
   } else if (mode === AddressingMode.ZERO_PAGE_X || mode === AddressingMode.ABSOLUTE_X) {
     expr = expr.replace(/,X$/i, '');
   } else if (mode === AddressingMode.ZERO_PAGE_Y || mode === AddressingMode.ABSOLUTE_Y) {

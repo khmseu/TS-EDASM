@@ -26,6 +26,7 @@ interface AssemblerState {
   warnings: string[];
   lineNumber: number;
   cpu: '6502' | '65C02';
+  lastGlobalLabel: string; // Track last global label for local label scoping
 }
 
 const DIRECTIVES = new Set([
@@ -42,7 +43,8 @@ export function pass1(source: string, options: Pass1Options = {}): Pass1Result {
     errors: [],
     warnings: [],
     lineNumber: 0,
-    cpu: options.cpu || '6502'
+    cpu: options.cpu || '6502',
+    lastGlobalLabel: ''
   };
   
   const parsedLines: SourceLine[] = [];
@@ -62,7 +64,19 @@ export function pass1(source: string, options: Pass1Options = {}): Pass1Result {
     // Define label if present (unless it's an EQU - which will define it with the operand value)
     if (parsed.label && parsed.mnemonic?.toUpperCase() !== 'EQU') {
       try {
-        state.symbols.define(parsed.label, state.pc, true);
+        let labelName = parsed.label;
+        // Handle local labels (starting with '.')
+        if (labelName.startsWith('.')) {
+          if (!state.lastGlobalLabel) {
+            state.errors.push(`Line ${state.lineNumber}: Local label ${labelName} without preceding global label`);
+            continue;
+          }
+          labelName = state.lastGlobalLabel + labelName;
+        } else {
+          // This is a global label, remember it
+          state.lastGlobalLabel = labelName;
+        }
+        state.symbols.define(labelName, state.pc, true);
       } catch (err) {
         state.errors.push(`Line ${state.lineNumber}: ${err instanceof Error ? err.message : String(err)}`);
       }
@@ -106,7 +120,7 @@ export function pass1(source: string, options: Pass1Options = {}): Pass1Result {
 }
 
 function processDirective(state: AssemblerState, line: SourceLine, directive: string): void {
-  const evaluator = new ExpressionEvaluator(state.symbols);
+  const evaluator = new ExpressionEvaluator(state.symbols, state.pc, state.lastGlobalLabel);
   
   switch (directive) {
     case 'ORG': {
@@ -140,7 +154,19 @@ function processDirective(state: AssemblerState, line: SourceLine, directive: st
       }
       // Define label with operand value
       try {
-        state.symbols.define(line.label, result.value, result.relocatable);
+        let labelName = line.label;
+        // Handle local labels (starting with '.')
+        if (labelName.startsWith('.')) {
+          if (!state.lastGlobalLabel) {
+            state.errors.push(`Line ${state.lineNumber}: Local label ${labelName} without preceding global label`);
+            return;
+          }
+          labelName = state.lastGlobalLabel + labelName;
+        } else {
+          // This is a global label, remember it
+          state.lastGlobalLabel = labelName;
+        }
+        state.symbols.define(labelName, result.value, result.relocatable);
       } catch (err) {
         state.errors.push(`Line ${state.lineNumber}: ${err instanceof Error ? err.message : String(err)}`);
       }
@@ -198,7 +224,19 @@ function processDirective(state: AssemblerState, line: SourceLine, directive: st
     case 'REL':
     case 'CHN':
     case 'END':
-      // These don't affect PC
+      // Linker directives
+      if (directive === 'EXT' && line.operand) {
+        // External symbol declaration - mark as defined but external
+        // This prevents "undefined symbol" errors for symbols that will be resolved by linker
+        const symbols = line.operand.split(',').map(s => s.trim());
+        for (const symbolName of symbols) {
+          try {
+            state.symbols.defineExternal(symbolName);
+          } catch (err) {
+            state.errors.push(`Line ${state.lineNumber}: ${err instanceof Error ? err.message : String(err)}`);
+          }
+        }
+      }
       break;
   }
 }

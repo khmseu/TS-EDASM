@@ -13,14 +13,20 @@ export interface ExpressionResult {
 export class ExpressionEvaluator {
   private symbols: SymbolTable;
   private currentPC?: number;
+  private lastGlobalLabel?: string;
   
-  constructor(symbols: SymbolTable, currentPC?: number) {
+  constructor(symbols: SymbolTable, currentPC?: number, lastGlobalLabel?: string) {
     this.symbols = symbols;
     this.currentPC = currentPC;
+    this.lastGlobalLabel = lastGlobalLabel;
   }
   
   setCurrentPC(pc: number): void {
     this.currentPC = pc;
+  }
+  
+  setLastGlobalLabel(label: string): void {
+    this.lastGlobalLabel = label;
   }
   
   evaluate(expr: string): ExpressionResult {
@@ -88,7 +94,12 @@ export class ExpressionEvaluator {
   }
   
   private evaluateSymbol(name: string): ExpressionResult {
-    const symbol = this.symbols.reference(name);
+    let symbolName = name;
+    // Handle local labels (starting with '.')
+    if (symbolName.startsWith('.') && this.lastGlobalLabel) {
+      symbolName = this.lastGlobalLabel + symbolName;
+    }
+    const symbol = this.symbols.reference(symbolName);
     
     return {
       value: symbol.value,
