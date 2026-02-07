@@ -345,7 +345,7 @@ MAIN  LDX #10
 
     const result = assemble(source, { origin: 0x8000 });
     expect(result.ok).toBe(false);
-    expect(result.errors[0].message).toMatch(/undefined/i);
+    expect(result.errors[0]).toMatch(/undefined/i);
   });
 });
 
@@ -519,7 +519,7 @@ START NOP
 
     const result = assemble(source, { origin: 0x8000 });
     expect(result.ok).toBe(false);
-    expect(result.errors[0].message).toMatch(/range|branch/i);
+    expect(result.errors[0]).toMatch(/range|branch/i);
   });
 
   it('should detect duplicate labels', () => {
@@ -531,7 +531,7 @@ LABEL NOP
 
     const result = assemble(source, { origin: 0x8000 });
     expect(result.ok).toBe(false);
-    expect(result.errors[0].message).toMatch(/duplicate|redefin/i);
+    expect(result.errors[0]).toMatch(/duplicate|redefin/i);
   });
 });
 

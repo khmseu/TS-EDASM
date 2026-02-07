@@ -27,7 +27,7 @@ export class SymbolTable {
     
     if (existing) {
       if (existing.defined) {
-        throw new Error(`Symbol ${name} already defined`);
+        throw new Error(`Duplicate symbol definition: ${name}`);
       }
       existing.value = value;
       existing.defined = true;
@@ -73,6 +73,11 @@ export class SymbolTable {
   
   lookup(name: string): Symbol | undefined {
     return this.symbols.get(name.toUpperCase());
+  }
+  
+  get(name: string): number | undefined {
+    const symbol = this.symbols.get(name.toUpperCase());
+    return symbol?.value;
   }
   
   has(name: string): boolean {

@@ -3,21 +3,26 @@
 
 set -e
 
+# Create log file with timestamp
+LOG_FILE="test_output_$(date +%Y%m%d_%H%M%S).log"
+
 echo "TS-EDASM Test Suite"
 echo "==================="
+echo "Output will be saved to: $LOG_FILE"
 echo ""
 
-case "${1:-all}" in
-  all)
-    echo "Running all tests..."
-    npm test
-    ;;
-  golden)
-    echo "Running golden tests..."
-    npm run test:golden
-    ;;
-  integration)
-    echo "Running integration tests..."
+{
+  case "${1:-all}" in
+    all)
+      echo "Running all tests..."
+      npm test
+      ;;
+    golden)
+      echo "Running golden tests..."
+      npm run test:golden
+      ;;
+    integration)
+      echo "Running integration tests..."
     npm run test:integration
     ;;
   smoke)
@@ -45,6 +50,9 @@ case "${1:-all}" in
     exit 1
     ;;
 esac
+} 2>&1 | tee "$LOG_FILE"
 
 echo ""
+echo "✓ Test output saved to: $LOG_FILE"
+echo "View with: cat $LOG_FILE"
 echo "Done!"

@@ -44,6 +44,9 @@ export function pass2(
   for (const line of lines) {
     let listingLine = '';
     
+    // Set current PC for evaluator (used for * in expressions)
+    evaluator.setCurrentPC(buffer.pc);
+    
     // Format: ADDR  CODE       LABEL  MNEMONIC OPERAND
     const addrStr = buffer.pc.toString(16).toUpperCase().padStart(4, '0');
     
@@ -77,6 +80,11 @@ export function pass2(
       errors.push(`Line ${line.lineNumber}: ${result.error}`);
     }
     
+    if (result.bytes) {
+      buffer.data.push(...result.bytes);
+      buffer.pc += result.bytes.length;
+    }
+    
     if (options.listing && result.bytes) {
       const codeStr = result.bytes.map(b => b.toString(16).toUpperCase().padStart(2, '0')).join(' ');
       listingLines.push(`${addrStr}  ${codeStr.padEnd(12)}  ${line.raw}`);
@@ -85,6 +93,9 @@ export function pass2(
   
   const objectCode = new Uint8Array(buffer.data);
   const listing = options.listing ? listingLines.join('\n') : undefined;
+  
+  // Define the special '*' symbol to be the current PC
+  symbols.define('*', buffer.pc, true);
   
   return {
     objectCode,
@@ -221,7 +232,16 @@ function generateInstruction(
   evaluator: ExpressionEvaluator
 ): InstructionResult {
   const operand = line.operand || '';
-  const mode = determineAddressingMode(operand, evaluator);
+  
+  // Check if this is a branch instruction - these ALWAYS use relative addressing
+  const branchMnemonics = /^(BEQ|BNE|BCC|BCS|BMI|BPL|BVC|BVS)$/i;
+  let mode: AddressingMode | null;
+  
+  if (branchMnemonics.test(mnemonic)) {
+    mode = AddressingMode.RELATIVE;
+  } else {
+    mode = determineAddressingMode(operand, evaluator, mnemonic);
+  }
   
   if (!mode) {
     return { error: `Cannot determine addressing mode for: ${operand}` };
@@ -246,8 +266,9 @@ function generateInstruction(
     const value = operandValue.value!;
     
     if (mode === AddressingMode.RELATIVE) {
-      // Branch offset: target - (PC + 2)
-      const offset = value - (buffer.pc + 2);
+      // Branch offset: target - (PC + 1) for 2-byte instructions
+      // The +1 accounts for the offset byte itself
+      const offset = value - (buffer.pc + 1);
       if (offset < -128 || offset > 127) {
         return { error: `Branch out of range: ${offset}` };
       }
@@ -260,16 +281,10 @@ function generateInstruction(
     }
   }
   
-  // Add to buffer
-  for (const byte of bytes) {
-    buffer.data.push(byte);
-  }
-  buffer.pc += bytes.length;
-  
   return { bytes };
 }
 
-function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator): AddressingMode | null {
+function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator, mnemonic: string = ''): AddressingMode | null {
   const op = operand.trim();
   
   if (op.length === 0) return AddressingMode.IMPLIED;
@@ -309,6 +324,13 @@ function determineAddressingMode(operand: string, evaluator: ExpressionEvaluator
   }
   
   return AddressingMode.ABSOLUTE;
+}
+
+// List of branch mnemonics that use relative addressing
+const BRANCH_MNEMONICS = ['BEQ', 'BNE', 'BCC', 'BCS', 'BMI', 'BPL', 'BVC', 'BVS'];
+
+function isBranchInstruction(mnemonic: string): boolean {
+  return BRANCH_MNEMONICS.includes(mnemonic.toUpperCase());
 }
 
 function extractOperandValue(

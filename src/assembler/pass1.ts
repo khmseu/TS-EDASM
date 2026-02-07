@@ -59,8 +59,8 @@ export function pass1(source: string, options: Pass1Options = {}): Pass1Result {
       continue;
     }
     
-    // Define label if present
-    if (parsed.label) {
+    // Define label if present (unless it's an EQU - which will define it with the operand value)
+    if (parsed.label && parsed.mnemonic?.toUpperCase() !== 'EQU') {
       try {
         state.symbols.define(parsed.label, state.pc, true);
       } catch (err) {
@@ -138,7 +138,12 @@ function processDirective(state: AssemblerState, line: SourceLine, directive: st
         state.errors.push(`Line ${state.lineNumber}: EQU operand undefined`);
         return;
       }
-      // Label already defined in main loop
+      // Define label with operand value
+      try {
+        state.symbols.define(line.label, result.value, result.relocatable);
+      } catch (err) {
+        state.errors.push(`Line ${state.lineNumber}: ${err instanceof Error ? err.message : String(err)}`);
+      }
       break;
     }
     

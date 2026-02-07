@@ -12,9 +12,15 @@ export interface ExpressionResult {
 
 export class ExpressionEvaluator {
   private symbols: SymbolTable;
+  private currentPC?: number;
   
-  constructor(symbols: SymbolTable) {
+  constructor(symbols: SymbolTable, currentPC?: number) {
     this.symbols = symbols;
+    this.currentPC = currentPC;
+  }
+  
+  setCurrentPC(pc: number): void {
+    this.currentPC = pc;
   }
   
   evaluate(expr: string): ExpressionResult {
@@ -23,6 +29,16 @@ export class ExpressionEvaluator {
     
     if (clean.length === 0) {
       return { value: 0, relocatable: false, external: false, undefined: true };
+    }
+
+    // Handle current PC (*) 
+    if (clean === '*') {
+      return { 
+        value: this.currentPC ?? 0, 
+        relocatable: true, 
+        external: false, 
+        undefined: this.currentPC === undefined 
+      };
     }
     
     // Try to parse as simple number first
@@ -139,6 +155,16 @@ export class ExpressionEvaluator {
         const symName = expr.substring(pos, symEnd);
         pos = symEnd;
         return this.evaluateSymbol(symName);
+      }
+      
+      // Current PC (*)
+      if (parseChar('*')) {
+        return { 
+          value: this.currentPC ?? 0, 
+          relocatable: true, 
+          external: false, 
+          undefined: this.currentPC === undefined 
+        };
       }
       
       // Parenthesized expression

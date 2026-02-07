@@ -149,7 +149,7 @@ describe('Integration Tests - Error Detection', () => {
     
     const result = assemble(source, { origin: 0x8000 });
     expect(result.ok).toBe(false);
-    expect(result.errors[0].message).toMatch(/undefined|not found/i);
+    expect(result.errors[0]).toMatch(/undefined|not found/i);
   });
 });
 
