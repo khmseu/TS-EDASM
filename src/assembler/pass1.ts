@@ -1,10 +1,10 @@
 // Pass 1: Symbol discovery and PC tracking
 // Port of EdAsm pass 1 logic from ASM2.S
 
-import { SymbolTable } from './symbols';
-import { parseLine, type SourceLine } from './tokenizer';
-import { ExpressionEvaluator } from './expressions';
-import { getSupportedModes, getInstructionSize, AddressingMode } from './opcodes';
+import { SymbolTable } from './symbols.js';
+import { parseLine, type SourceLine } from './tokenizer.js';
+import { ExpressionEvaluator } from './expressions.js';
+import { getSupportedModes, getInstructionSize, AddressingMode } from './opcodes.js';
 
 export interface Pass1Options {
   origin?: number;

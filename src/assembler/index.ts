@@ -1,6 +1,6 @@
-import { pass1 } from './pass1';
-import { pass2 } from './pass2';
-import type { SymbolTable } from './symbols';
+import { pass1 } from './pass1.js';
+import { pass2 } from './pass2.js';
+import type { SymbolTable } from './symbols.js';
 
 // Re-export SymbolTable for tests
 export type { SymbolTable } from './symbols';

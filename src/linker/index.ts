@@ -1,4 +1,4 @@
-import { parseREL, buildREL, type RELObject, type RelocationEntry } from './relformat';
+import { parseREL, buildREL, type RELObject, type RelocationEntry } from './relformat.js';
 
 export interface LinkOptions {
   outputName?: string;

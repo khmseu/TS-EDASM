@@ -2,6 +2,7 @@
     "name": "ts-edasm",
     "version": "0.1.0",
     "private": true,
+    "type": "module",
     "description": "TypeScript port of EdAsm 6502 assembler and linker",
     "license": "UNLICENSED",
     "main": "dist/index.js",

@@ -1,7 +1,7 @@
 // Expression evaluator for operands
 // Supports numeric expressions with operators: + - * / & | ^
 
-import { SymbolTable, type Symbol } from './symbols';
+import { SymbolTable, type Symbol } from './symbols.js';
 
 export interface ExpressionResult {
   value: number;

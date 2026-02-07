@@ -2,8 +2,8 @@
 
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
-import { assemble, link } from './index';
-import { writeProDOSAttributes } from './io/prodosAttributes';
+import { assemble, link } from './index.js';
+import { writeProDOSAttributes } from './io/prodosAttributes.js';
 
 const VERSION = '0.1.0';
 

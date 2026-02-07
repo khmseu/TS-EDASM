@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Test runner that writes detailed output to log files
 
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { spawn } from 'child_process';
 
 // Create logs directory
 const logsDir = './test_logs';
@@ -39,7 +39,6 @@ log('');
 async function runTests() {
   try {
     // Check if dist exists
-    const fs = require('fs');
     if (!fs.existsSync('./dist/assembler/index.js')) {
       log('✗ ERROR: dist/assembler/index.js not found');
       log('Please build the project first: npm run build');
@@ -48,7 +47,7 @@ async function runTests() {
     }
     
     log('Importing modules...');
-    const { assemble } = require('./dist/assembler/index.js');
+    const { assemble } = await import('./dist/assembler/index.js');
     log('✓ Modules imported successfully');
     log('');
 

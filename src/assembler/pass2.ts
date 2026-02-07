@@ -1,11 +1,11 @@
 // Pass 2: Code generation
 // Port of EdAsm pass 2 logic from ASM2.S
 
-import { SymbolTable } from './symbols';
-import { type SourceLine } from './tokenizer';
-import { ExpressionEvaluator } from './expressions';
-import { lookupOpcode, getInstructionSize, AddressingMode } from './opcodes';
-import { buildREL, type RelocationEntry } from '../linker/relformat';
+import { SymbolTable } from './symbols.js';
+import { type SourceLine } from './tokenizer.js';
+import { ExpressionEvaluator } from './expressions.js';
+import { lookupOpcode, getInstructionSize, AddressingMode } from './opcodes.js';
+import { buildREL, type RelocationEntry } from '../linker/relformat.js';
 
 export interface Pass2Options {
   listing?: boolean;
