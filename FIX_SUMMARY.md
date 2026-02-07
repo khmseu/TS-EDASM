@@ -24,7 +24,7 @@ if (branchMnemonics.test(mnemonic)) {
 
 **Affected Tests:**
 
-- "should detect branch out of range"  
+- "should detect branch out of range"
 - All branch instruction tests
 
 ---
@@ -49,15 +49,15 @@ get(name: string): number | undefined {
 
 ---
 
-### 3. Special '*' Symbol for Final PC
+### 3. Special '\*' Symbol for Final PC
 
 **File:** `src/assembler/pass2.ts`
-**Issue:** Tests expected final program counter to be tracked in a special '*' symbol
+**Issue:** Tests expected final program counter to be tracked in a special '\*' symbol
 **Solution:** Added definition at end of pass2:
 
 ```typescript
 // Define the special '*' symbol to be the current PC
-symbols.define('*', buffer.pc, true);
+symbols.define("*", buffer.pc, true);
 ```
 
 **Affected Tests:**
@@ -66,7 +66,7 @@ symbols.define('*', buffer.pc, true);
 
 ---
 
-### 4. Error Message Assertions  
+### 4. Error Message Assertions
 
 **Files:** `tests/golden.test.ts`, `tests/integration.test.ts`
 **Issue:** Tests were accessing `.message` property on error strings, but errors are plain strings
@@ -97,7 +97,7 @@ expect(result.errors[0]).toMatch(/regex/);
 
 1. Branch instruction detection (BNE uses RELATIVE)
 2. SymbolTable.get() returns number
-3. '*' symbol tracks final PC
+3. '\*' symbol tracks final PC
 4. EQU with expressions
 5. All 8 branch instructions detected
 
@@ -127,7 +127,7 @@ expect(result.errors[0]).toMatch(/regex/);
 
 1. **src/assembler/pass2.ts**
    - Added branch instruction handling in generateInstruction()
-   - Added '*' symbol definition at end of pass2
+   - Added '\*' symbol definition at end of pass2
    - Simplified determineAddressingMode() by removing redundant branch check
 
 2. **src/assembler/symbols.ts**

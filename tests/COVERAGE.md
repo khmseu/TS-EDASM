@@ -73,7 +73,7 @@ The TS-EDASM test suite provides comprehensive validation of the assembler and l
 - Arithmetic operators
   - Addition (+)
   - Subtraction (-)
-  - Multiplication (*)
+  - Multiplication (\*)
   - Division (/)
 - Byte extraction
   - Low byte (<)
@@ -294,7 +294,7 @@ Tests verify exact byte output against 6502 specification. If an instruction sho
 
 Tests verify end-to-end workflows with realistic programs. Fixture files represent real-world assembly code that would be written for Apple II/ProDOS.
 
-### Smoke Tests  
+### Smoke Tests
 
 Quick sanity checks to catch basic regressions. Run fast and cover the happy path.
 

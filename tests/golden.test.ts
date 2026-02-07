@@ -2,13 +2,13 @@
  * Golden tests - comprehensive validation of assembler output
  */
 
-import { describe, it, expect } from 'vitest';
-import { assemble } from '../src/assembler';
-import { link } from '../src/linker';
-import type { AssemblyOptions } from '../src/assembler';
+import { describe, it, expect } from "vitest";
+import { assemble } from "../src/assembler";
+import { link } from "../src/linker";
+import type { AssemblyOptions } from "../src/assembler";
 
-describe('Golden Tests - Instructions', () => {
-  it('should assemble all addressing modes correctly', () => {
+describe("Golden Tests - Instructions", () => {
+  it("should assemble all addressing modes correctly", () => {
     const source = `
       ORG $8000
       ; Immediate
@@ -63,21 +63,21 @@ START BEQ START
     if (!result.ok) return;
 
     const code = result.artifacts!.objectBytes!;
-    
+
     // Verify specific opcodes and operands
-    expect(code[0]).toBe(0xA9); // LDA #$42
+    expect(code[0]).toBe(0xa9); // LDA #$42
     expect(code[1]).toBe(0x42);
-    expect(code[2]).toBe(0xA2); // LDX #$10
+    expect(code[2]).toBe(0xa2); // LDX #$10
     expect(code[3]).toBe(0x10);
-    expect(code[4]).toBe(0xA0); // LDY #$20
+    expect(code[4]).toBe(0xa0); // LDY #$20
     expect(code[5]).toBe(0x20);
-    expect(code[6]).toBe(0xA5); // LDA $80
+    expect(code[6]).toBe(0xa5); // LDA $80
     expect(code[7]).toBe(0x80);
     expect(code[8]).toBe(0x85); // STA $90
     expect(code[9]).toBe(0x90);
   });
 
-  it('should handle all 6502 opcodes', () => {
+  it("should handle all 6502 opcodes", () => {
     const source = `
       ORG $1000
       ; Load/Store
@@ -152,14 +152,14 @@ START BEQ START
 
     const result = assemble(source, { origin: 0x1000 });
     if (!result.ok) {
-      console.error('Assembly errors:', result.errors);
+      console.error("Assembly errors:", result.errors);
     }
     expect(result.ok).toBe(true);
     expect(result.artifacts?.objectBytes).toBeDefined();
     expect(result.artifacts!.objectBytes!.length).toBeGreaterThan(50);
   });
 
-  it('should assemble 65C02 extended opcodes', () => {
+  it("should assemble 65C02 extended opcodes", () => {
     const source = `
       ORG $2000
       ; 65C02 additions
@@ -181,22 +181,22 @@ START BEQ START
       JMP ($1000,X)
     `;
 
-    const result = assemble(source, { origin: 0x2000, cpu: '65C02' });
+    const result = assemble(source, { origin: 0x2000, cpu: "65C02" });
     if (!result.ok) {
-      console.error('65C02 errors:', result.errors);
+      console.error("65C02 errors:", result.errors);
     }
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
     const code = result.artifacts!.objectBytes!;
     expect(code[0]).toBe(0x80); // BRA
-    expect(code[2]).toBe(0xDA); // PHX
-    expect(code[3]).toBe(0x5A); // PHY
+    expect(code[2]).toBe(0xda); // PHX
+    expect(code[3]).toBe(0x5a); // PHY
   });
 });
 
-describe('Golden Tests - Directives', () => {
-  it('should handle ORG directive', () => {
+describe("Golden Tests - Directives", () => {
+  it("should handle ORG directive", () => {
     const source = `
       ORG $8000
       NOP
@@ -209,10 +209,10 @@ describe('Golden Tests - Directives', () => {
     if (!result.ok) return;
 
     // Should have tracked PC changes
-    expect(result.artifacts?.symbols.get('*')).toBe(0x9001);
+    expect(result.artifacts?.symbols.get("*")).toBe(0x9001);
   });
 
-  it('should handle EQU directive', () => {
+  it("should handle EQU directive", () => {
     const source = `
       MYCONST EQU $42
       ANOTHER EQU MYCONST + 10
@@ -226,17 +226,17 @@ describe('Golden Tests - Directives', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    expect(result.artifacts?.symbols.get('MYCONST')).toBe(0x42);
-    expect(result.artifacts?.symbols.get('ANOTHER')).toBe(0x4C);
-    
+    expect(result.artifacts?.symbols.get("MYCONST")).toBe(0x42);
+    expect(result.artifacts?.symbols.get("ANOTHER")).toBe(0x4c);
+
     const code = result.artifacts!.objectBytes!;
-    expect(code[0]).toBe(0xA9); // LDA #
+    expect(code[0]).toBe(0xa9); // LDA #
     expect(code[1]).toBe(0x42); // $42
-    expect(code[2]).toBe(0xA2); // LDX #
-    expect(code[3]).toBe(0x4C); // $4C
+    expect(code[2]).toBe(0xa2); // LDX #
+    expect(code[3]).toBe(0x4c); // $4C
   });
 
-  it('should handle data directives', () => {
+  it("should handle data directives", () => {
     const source = `
       ORG $8000
       DB $01,$02,$03
@@ -251,40 +251,40 @@ describe('Golden Tests - Directives', () => {
     if (!result.ok) return;
 
     const code = result.artifacts!.objectBytes!;
-    
+
     // DB
     expect(code[0]).toBe(0x01);
     expect(code[1]).toBe(0x02);
     expect(code[2]).toBe(0x03);
-    
+
     // DW (little-endian)
     expect(code[3]).toBe(0x34);
     expect(code[4]).toBe(0x12);
     expect(code[5]).toBe(0x78);
     expect(code[6]).toBe(0x56);
-    
+
     // ASC
-    expect(code[7]).toBe('H'.charCodeAt(0));
-    expect(code[8]).toBe('E'.charCodeAt(0));
-    expect(code[9]).toBe('L'.charCodeAt(0));
-    expect(code[10]).toBe('L'.charCodeAt(0));
-    expect(code[11]).toBe('O'.charCodeAt(0));
-    
+    expect(code[7]).toBe("H".charCodeAt(0));
+    expect(code[8]).toBe("E".charCodeAt(0));
+    expect(code[9]).toBe("L".charCodeAt(0));
+    expect(code[10]).toBe("L".charCodeAt(0));
+    expect(code[11]).toBe("O".charCodeAt(0));
+
     // DCI (last char has high bit set)
-    expect(code[12]).toBe('W'.charCodeAt(0));
-    expect(code[13]).toBe('O'.charCodeAt(0));
-    expect(code[14]).toBe('R'.charCodeAt(0));
-    expect(code[15]).toBe('L'.charCodeAt(0));
-    expect(code[16]).toBe('D'.charCodeAt(0) | 0x80);
-    
+    expect(code[12]).toBe("W".charCodeAt(0));
+    expect(code[13]).toBe("O".charCodeAt(0));
+    expect(code[14]).toBe("R".charCodeAt(0));
+    expect(code[15]).toBe("L".charCodeAt(0));
+    expect(code[16]).toBe("D".charCodeAt(0) | 0x80);
+
     // DS (5 zeros)
     expect(code[17]).toBe(0x00);
     expect(code[21]).toBe(0x00);
   });
 });
 
-describe('Golden Tests - Labels and Symbols', () => {
-  it('should resolve forward references', () => {
+describe("Golden Tests - Labels and Symbols", () => {
+  it("should resolve forward references", () => {
     const source = `
       ORG $8000
 START JMP END
@@ -297,16 +297,16 @@ END   RTS
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    expect(result.artifacts?.symbols.get('START')).toBe(0x8000);
-    expect(result.artifacts?.symbols.get('END')).toBe(0x8005);
-    
+    expect(result.artifacts?.symbols.get("START")).toBe(0x8000);
+    expect(result.artifacts?.symbols.get("END")).toBe(0x8005);
+
     const code = result.artifacts!.objectBytes!;
-    expect(code[0]).toBe(0x4C); // JMP absolute
+    expect(code[0]).toBe(0x4c); // JMP absolute
     expect(code[1]).toBe(0x05); // Low byte of $8005
     expect(code[2]).toBe(0x80); // High byte of $8005
   });
 
-  it('should handle backward references', () => {
+  it("should handle backward references", () => {
     const source = `
       ORG $C000
 START NOP
@@ -316,19 +316,27 @@ LOOP  DEX
       JMP START
     `;
 
-    const result = assemble(source, { origin: 0xC000 });
+    const result = assemble(source, { origin: 0xc000 });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
     const code = result.artifacts!.objectBytes!;
-    console.log('Code bytes:', Array.from(code).map((b, i) => `$C${(0x000 + i).toString(16).toUpperCase().padStart(3, '0')}: ${b.toString(16).toUpperCase().padStart(2, '0')}`).join(', '));
+    console.log(
+      "Code bytes:",
+      Array.from(code)
+        .map(
+          (b, i) =>
+            `$C${(0x000 + i).toString(16).toUpperCase().padStart(3, "0")}: ${b.toString(16).toUpperCase().padStart(2, "0")}`,
+        )
+        .join(", "),
+    );
     // BNE LOOP (should branch back 3 bytes from next instruction)
     // PC after BNE is $C005, target is $C002, so offset is -3
-    expect(code[3]).toBe(0xD0); // BNE
-    expect(code[4]).toBe(0xFD); // -3 (branch offset)
+    expect(code[3]).toBe(0xd0); // BNE
+    expect(code[4]).toBe(0xfd); // -3 (branch offset)
   });
 
-  it('should handle local labels', () => {
+  it("should handle local labels", () => {
     const source = `
       ORG $5000
 MAIN  LDX #10
@@ -339,16 +347,16 @@ MAIN  LDX #10
 
     const result = assemble(source, { origin: 0x5000 });
     if (!result.ok) {
-      console.error('Local labels errors:', result.errors);
+      console.error("Local labels errors:", result.errors);
     }
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    expect(result.artifacts?.symbols.has('MAIN')).toBe(true);
-    expect(result.artifacts?.symbols.has('MAIN.LOOP')).toBe(true);
+    expect(result.artifacts?.symbols.has("MAIN")).toBe(true);
+    expect(result.artifacts?.symbols.has("MAIN.LOOP")).toBe(true);
   });
 
-  it('should report undefined symbols', () => {
+  it("should report undefined symbols", () => {
     const source = `
       ORG $8000
       JMP UNDEFINED
@@ -360,8 +368,8 @@ MAIN  LDX #10
   });
 });
 
-describe('Golden Tests - Expressions', () => {
-  it('should evaluate arithmetic expressions', () => {
+describe("Golden Tests - Expressions", () => {
+  it("should evaluate arithmetic expressions", () => {
     const source = `
       ORG $8000
       BASE EQU $1000
@@ -376,13 +384,13 @@ describe('Golden Tests - Expressions', () => {
     if (!result.ok) return;
 
     const code = result.artifacts!.objectBytes!;
-    expect(code[1]).toBe(0x0A); // 10
-    expect(code[3]).toBe(0xFB); // -5 (as byte)
+    expect(code[1]).toBe(0x0a); // 10
+    expect(code[3]).toBe(0xfb); // -5 (as byte)
     expect(code[5]).toBe(0x00); // $2000 low byte
     expect(code[7]).toBe(0x00); // $0400 low byte
   });
 
-  it('should handle < and > operators', () => {
+  it("should handle < and > operators", () => {
     const source = `
       ORG $8000
       ADDR EQU $1234
@@ -399,7 +407,7 @@ describe('Golden Tests - Expressions', () => {
     expect(code[3]).toBe(0x12); // High byte
   });
 
-  it('should handle complex expressions', () => {
+  it("should handle complex expressions", () => {
     const source = `
       ORG $8000
       A EQU 10
@@ -419,8 +427,8 @@ describe('Golden Tests - Expressions', () => {
   });
 });
 
-describe('Golden Tests - Linker', () => {
-  it('should link multiple modules', () => {
+describe("Golden Tests - Linker", () => {
+  it("should link multiple modules", () => {
     const mod1 = `
       REL
       EXT SUB2
@@ -441,26 +449,26 @@ SUB2  LDA #$42
     const result2 = assemble(mod2, { origin: 0x8000, relocatable: true });
 
     if (!result1.ok) {
-      console.error('Module 1 errors:', result1.errors);
+      console.error("Module 1 errors:", result1.errors);
     }
     if (!result2.ok) {
-      console.error('Module 2 errors:', result2.errors);
+      console.error("Module 2 errors:", result2.errors);
     }
     expect(result1.ok).toBe(true);
     expect(result2.ok).toBe(true);
-    
+
     if (!result1.ok || !result2.ok) return;
 
     const linkResult = link(
       [result1.artifacts!.objectBytes!, result2.artifacts!.objectBytes!],
-      { origin: 0x8000 }
+      { origin: 0x8000 },
     );
 
     expect(linkResult.ok).toBe(true);
     expect(linkResult.artifacts?.executable).toBeDefined();
   });
 
-  it('should handle external symbols', () => {
+  it("should handle external symbols", () => {
     const source = `
       REL
       EXT PRINT
@@ -475,10 +483,10 @@ MAIN  JSR PRINT
     if (!result.ok) return;
 
     // Verify external symbol is marked
-    expect(result.artifacts?.symbols.has('PRINT')).toBe(true);
+    expect(result.artifacts?.symbols.has("PRINT")).toBe(true);
   });
 
-  it('should apply relocations', () => {
+  it("should apply relocations", () => {
     const source = `
       REL
       ORG $8000
@@ -487,34 +495,46 @@ DATA  DB $42
     `;
 
     const result = assemble(source, { origin: 0x8000, relocatable: true });
-    console.log('Assembly result:', result);
+    console.log("Assembly result:", result);
     if (result.artifacts?.objectBytes) {
-      console.log('Assembled bytes:', Array.from(result.artifacts.objectBytes).map((b: number) => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
+      console.log(
+        "Assembled bytes:",
+        Array.from(result.artifacts.objectBytes)
+          .map((b: number) => `0x${b.toString(16).padStart(2, "0")}`)
+          .join(" "),
+      );
     }
     if (result.artifacts?.objectBytes) {
-      console.log('Object bytes length:', result.artifacts.objectBytes.length);
+      console.log("Object bytes length:", result.artifacts.objectBytes.length);
     }
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
     // Link at different address
-    const linkResult = link([result.artifacts!.objectBytes!], { origin: 0x9000 });
-    console.log('Link result:', linkResult);
+    const linkResult = link([result.artifacts!.objectBytes!], {
+      origin: 0x9000,
+    });
+    console.log("Link result:", linkResult);
     expect(linkResult.ok).toBe(true);
-    
+
     if (!linkResult.ok) return;
     const code = linkResult.artifacts!.executable!;
-    console.log('Linked code:', Array.from(code).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '));
-    
+    console.log(
+      "Linked code:",
+      Array.from(code)
+        .map((b) => `0x${b.toString(16).padStart(2, "0")}`)
+        .join(" "),
+    );
+
     // LDA absolute should reference relocated DATA
-    expect(code[0]).toBe(0xAD); // LDA absolute
+    expect(code[0]).toBe(0xad); // LDA absolute
     expect(code[1]).toBe(0x03); // Low byte of $9003
     expect(code[2]).toBe(0x90); // High byte of $9003
   });
 });
 
-describe('Golden Tests - Error Handling', () => {
-  it('should detect invalid opcodes', () => {
+describe("Golden Tests - Error Handling", () => {
+  it("should detect invalid opcodes", () => {
     const source = `
       ORG $8000
       INVALID #$42
@@ -525,7 +545,7 @@ describe('Golden Tests - Error Handling', () => {
     expect(result.errors.length).toBeGreaterThan(0);
   });
 
-  it('should detect invalid addressing modes', () => {
+  it("should detect invalid addressing modes", () => {
     const source = `
       ORG $8000
       RTS #$42
@@ -535,7 +555,7 @@ describe('Golden Tests - Error Handling', () => {
     expect(result.ok).toBe(false);
   });
 
-  it('should detect branch out of range', () => {
+  it("should detect branch out of range", () => {
     const source = `
       ORG $8000
 START NOP
@@ -548,7 +568,7 @@ START NOP
     expect(result.errors[0]).toMatch(/range|branch/i);
   });
 
-  it('should detect duplicate labels', () => {
+  it("should detect duplicate labels", () => {
     const source = `
       ORG $8000
 LABEL NOP
@@ -561,8 +581,8 @@ LABEL NOP
   });
 });
 
-describe('Golden Tests - Listing Output', () => {
-  it('should generate listing with addresses and hex', () => {
+describe("Golden Tests - Listing Output", () => {
+  it("should generate listing with addresses and hex", () => {
     const source = `
       ORG $8000
 START LDA #$42
@@ -576,8 +596,8 @@ START LDA #$42
 
     const listing = result.artifacts?.listing;
     expect(listing).toBeDefined();
-    expect(listing).toContain('8000');
-    expect(listing).toContain('A9 42');
-    expect(listing).toContain('LDA #$42');
+    expect(listing).toContain("8000");
+    expect(listing).toContain("A9 42");
+    expect(listing).toContain("LDA #$42");
   });
 });

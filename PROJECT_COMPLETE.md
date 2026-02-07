@@ -93,7 +93,7 @@ docs/
 - ✅ All addressing modes (13)
 - ✅ 65C02 extensions (15+ opcodes)
 - ✅ Core directives (ORG, EQU, DB, DW, ASC, DCI, DS, REL, EXT, ENT)
-- ✅ Expression evaluation (+, -, *, /, <, >)
+- ✅ Expression evaluation (+, -, \*, /, <, >)
 - ✅ Multi-module linking
 - ✅ Error detection and reporting
 
@@ -171,7 +171,7 @@ docs/
 4. **Use programmatically**
 
    ```typescript
-   import { assemble, link } from 'ts-edasm';
+   import { assemble, link } from "ts-edasm";
    const result = assemble(source, options);
    ```
 

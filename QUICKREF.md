@@ -250,7 +250,7 @@ edasm link main.obj lib.obj -o program --origin 0x8000
 Line 10: Undefined symbol: UNKNOWN
 ```
 
-*Solution:* Define the symbol or add EXT directive for external symbol.
+_Solution:_ Define the symbol or add EXT directive for external symbol.
 
 **Invalid Opcode:**
 
@@ -258,7 +258,7 @@ Line 10: Undefined symbol: UNKNOWN
 Line 5: Unknown mnemonic: INVALID
 ```
 
-*Solution:* Check spelling and CPU type (6502 vs 65C02).
+_Solution:_ Check spelling and CPU type (6502 vs 65C02).
 
 **Branch Out of Range:**
 
@@ -266,7 +266,7 @@ Line 5: Unknown mnemonic: INVALID
 Line 20: Branch target out of range (-130 bytes)
 ```
 
-*Solution:* Use JMP for long branches or reorganize code.
+_Solution:_ Use JMP for long branches or reorganize code.
 
 **Duplicate Label:**
 
@@ -274,7 +274,7 @@ Line 20: Branch target out of range (-130 bytes)
 Line 15: Symbol 'LOOP' already defined at line 8
 ```
 
-*Solution:* Rename duplicate label or use local labels.
+_Solution:_ Rename duplicate label or use local labels.
 
 **File Not Found:**
 
@@ -283,7 +283,7 @@ Error: Cannot read file: program.s
   ENOENT: no such file or directory
 ```
 
-*Solution:* Check file path and spelling.
+_Solution:_ Check file path and spelling.
 
 ## Tips & Tricks
 

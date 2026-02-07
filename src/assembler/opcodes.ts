@@ -2,21 +2,21 @@
 // Preserves original table structure and lookup semantics
 
 export enum AddressingMode {
-  IMPLIED = 'implied',
-  ACCUMULATOR = 'accumulator',
-  IMMEDIATE = 'immediate',
-  ZERO_PAGE = 'zeroPage',
-  ZERO_PAGE_X = 'zeroPageX',
-  ZERO_PAGE_Y = 'zeroPageY',
-  ABSOLUTE = 'absolute',
-  ABSOLUTE_X = 'absoluteX',
-  ABSOLUTE_Y = 'absoluteY',
-  INDIRECT = 'indirect',
-  INDIRECT_X = 'indirectX',
-  INDIRECT_Y = 'indirectY',
-  INDIRECT_ZP = 'indirectZP',
-  RELATIVE = 'relative',
-  INDIRECT_ABS_X = 'indirectAbsX'
+  IMPLIED = "implied",
+  ACCUMULATOR = "accumulator",
+  IMMEDIATE = "immediate",
+  ZERO_PAGE = "zeroPage",
+  ZERO_PAGE_X = "zeroPageX",
+  ZERO_PAGE_Y = "zeroPageY",
+  ABSOLUTE = "absolute",
+  ABSOLUTE_X = "absoluteX",
+  ABSOLUTE_Y = "absoluteY",
+  INDIRECT = "indirect",
+  INDIRECT_X = "indirectX",
+  INDIRECT_Y = "indirectY",
+  INDIRECT_ZP = "indirectZP",
+  RELATIVE = "relative",
+  INDIRECT_ABS_X = "indirectAbsX",
 }
 
 export interface OpcodeDef {
@@ -50,233 +50,233 @@ export interface OpcodeDef {
 // Opcode byte values from ASM1.S OpcodeT table
 const OPCODE_TABLE: Record<string, Partial<Record<AddressingMode, number>>> = {
   ADC: {
-    [AddressingMode.ABSOLUTE]: 0x6D,
+    [AddressingMode.ABSOLUTE]: 0x6d,
     [AddressingMode.ZERO_PAGE]: 0x65,
     [AddressingMode.IMMEDIATE]: 0x69,
     [AddressingMode.ZERO_PAGE_X]: 0x75,
-    [AddressingMode.ABSOLUTE_X]: 0x7D,
+    [AddressingMode.ABSOLUTE_X]: 0x7d,
     [AddressingMode.ABSOLUTE_Y]: 0x79,
     [AddressingMode.INDIRECT_Y]: 0x71,
     [AddressingMode.INDIRECT_X]: 0x61,
-    [AddressingMode.INDIRECT_ZP]: 0x72 // 65C02
+    [AddressingMode.INDIRECT_ZP]: 0x72, // 65C02
   },
   AND: {
-    [AddressingMode.ABSOLUTE]: 0x2D,
+    [AddressingMode.ABSOLUTE]: 0x2d,
     [AddressingMode.ZERO_PAGE]: 0x25,
     [AddressingMode.IMMEDIATE]: 0x29,
     [AddressingMode.ZERO_PAGE_X]: 0x35,
-    [AddressingMode.ABSOLUTE_X]: 0x3D,
+    [AddressingMode.ABSOLUTE_X]: 0x3d,
     [AddressingMode.ABSOLUTE_Y]: 0x39,
     [AddressingMode.INDIRECT_Y]: 0x31,
     [AddressingMode.INDIRECT_X]: 0x21,
-    [AddressingMode.INDIRECT_ZP]: 0x32 // 65C02
+    [AddressingMode.INDIRECT_ZP]: 0x32, // 65C02
   },
   ASL: {
-    [AddressingMode.ABSOLUTE]: 0x0E,
+    [AddressingMode.ABSOLUTE]: 0x0e,
     [AddressingMode.ZERO_PAGE]: 0x06,
-    [AddressingMode.ACCUMULATOR]: 0x0A,
+    [AddressingMode.ACCUMULATOR]: 0x0a,
     [AddressingMode.ZERO_PAGE_X]: 0x16,
-    [AddressingMode.ABSOLUTE_X]: 0x1E
+    [AddressingMode.ABSOLUTE_X]: 0x1e,
   },
   BCC: { [AddressingMode.RELATIVE]: 0x90 },
-  BCS: { [AddressingMode.RELATIVE]: 0xB0 },
-  BEQ: { [AddressingMode.RELATIVE]: 0xF0 },
+  BCS: { [AddressingMode.RELATIVE]: 0xb0 },
+  BEQ: { [AddressingMode.RELATIVE]: 0xf0 },
   BIT: {
-    [AddressingMode.ABSOLUTE]: 0x2C,
+    [AddressingMode.ABSOLUTE]: 0x2c,
     [AddressingMode.ZERO_PAGE]: 0x24,
     [AddressingMode.IMMEDIATE]: 0x89, // 65C02
     [AddressingMode.ZERO_PAGE_X]: 0x34, // 65C02
-    [AddressingMode.ABSOLUTE_X]: 0x3C // 65C02
+    [AddressingMode.ABSOLUTE_X]: 0x3c, // 65C02
   },
   BMI: { [AddressingMode.RELATIVE]: 0x30 },
-  BNE: { [AddressingMode.RELATIVE]: 0xD0 },
+  BNE: { [AddressingMode.RELATIVE]: 0xd0 },
   BPL: { [AddressingMode.RELATIVE]: 0x10 },
   BRA: { [AddressingMode.RELATIVE]: 0x80 },
   BRK: { [AddressingMode.IMPLIED]: 0x00 },
   BVC: { [AddressingMode.RELATIVE]: 0x50 },
   BVS: { [AddressingMode.RELATIVE]: 0x70 },
   CLC: { [AddressingMode.IMPLIED]: 0x18 },
-  CLD: { [AddressingMode.IMPLIED]: 0xD8 },
+  CLD: { [AddressingMode.IMPLIED]: 0xd8 },
   CLI: { [AddressingMode.IMPLIED]: 0x58 },
-  CLV: { [AddressingMode.IMPLIED]: 0xB8 },
+  CLV: { [AddressingMode.IMPLIED]: 0xb8 },
   CMP: {
-    [AddressingMode.ABSOLUTE]: 0xCD,
-    [AddressingMode.ZERO_PAGE]: 0xC5,
-    [AddressingMode.IMMEDIATE]: 0xC9,
-    [AddressingMode.ZERO_PAGE_X]: 0xD5,
-    [AddressingMode.ABSOLUTE_X]: 0xDD,
-    [AddressingMode.ABSOLUTE_Y]: 0xD9,
-    [AddressingMode.INDIRECT_Y]: 0xD1,
-    [AddressingMode.INDIRECT_X]: 0xC1,
-    [AddressingMode.INDIRECT_ZP]: 0xD2
+    [AddressingMode.ABSOLUTE]: 0xcd,
+    [AddressingMode.ZERO_PAGE]: 0xc5,
+    [AddressingMode.IMMEDIATE]: 0xc9,
+    [AddressingMode.ZERO_PAGE_X]: 0xd5,
+    [AddressingMode.ABSOLUTE_X]: 0xdd,
+    [AddressingMode.ABSOLUTE_Y]: 0xd9,
+    [AddressingMode.INDIRECT_Y]: 0xd1,
+    [AddressingMode.INDIRECT_X]: 0xc1,
+    [AddressingMode.INDIRECT_ZP]: 0xd2,
   },
   CPX: {
-    [AddressingMode.ABSOLUTE]: 0xEC,
-    [AddressingMode.ZERO_PAGE]: 0xE4,
-    [AddressingMode.IMMEDIATE]: 0xE0
+    [AddressingMode.ABSOLUTE]: 0xec,
+    [AddressingMode.ZERO_PAGE]: 0xe4,
+    [AddressingMode.IMMEDIATE]: 0xe0,
   },
   CPY: {
-    [AddressingMode.ABSOLUTE]: 0xCC,
-    [AddressingMode.ZERO_PAGE]: 0xC4,
-    [AddressingMode.IMMEDIATE]: 0xC0
+    [AddressingMode.ABSOLUTE]: 0xcc,
+    [AddressingMode.ZERO_PAGE]: 0xc4,
+    [AddressingMode.IMMEDIATE]: 0xc0,
   },
   DEC: {
-    [AddressingMode.ABSOLUTE]: 0xCE,
-    [AddressingMode.ZERO_PAGE]: 0xC6,
-    [AddressingMode.ACCUMULATOR]: 0x3A, // 65C02
-    [AddressingMode.ZERO_PAGE_X]: 0xD6,
-    [AddressingMode.ABSOLUTE_X]: 0xDE
+    [AddressingMode.ABSOLUTE]: 0xce,
+    [AddressingMode.ZERO_PAGE]: 0xc6,
+    [AddressingMode.ACCUMULATOR]: 0x3a, // 65C02
+    [AddressingMode.ZERO_PAGE_X]: 0xd6,
+    [AddressingMode.ABSOLUTE_X]: 0xde,
   },
-  DEX: { [AddressingMode.IMPLIED]: 0xCA },
+  DEX: { [AddressingMode.IMPLIED]: 0xca },
   DEY: { [AddressingMode.IMPLIED]: 0x88 },
   EOR: {
-    [AddressingMode.ABSOLUTE]: 0x4D,
+    [AddressingMode.ABSOLUTE]: 0x4d,
     [AddressingMode.ZERO_PAGE]: 0x45,
     [AddressingMode.IMMEDIATE]: 0x49,
     [AddressingMode.ZERO_PAGE_X]: 0x55,
-    [AddressingMode.ABSOLUTE_X]: 0x5D,
+    [AddressingMode.ABSOLUTE_X]: 0x5d,
     [AddressingMode.ABSOLUTE_Y]: 0x59,
     [AddressingMode.INDIRECT_Y]: 0x51,
     [AddressingMode.INDIRECT_X]: 0x41,
-    [AddressingMode.INDIRECT_ZP]: 0x52
+    [AddressingMode.INDIRECT_ZP]: 0x52,
   },
   INC: {
-    [AddressingMode.ABSOLUTE]: 0xEE,
-    [AddressingMode.ZERO_PAGE]: 0xE6,
-    [AddressingMode.ACCUMULATOR]: 0x1A,
-    [AddressingMode.ZERO_PAGE_X]: 0xF6,
-    [AddressingMode.ABSOLUTE_X]: 0xFE
+    [AddressingMode.ABSOLUTE]: 0xee,
+    [AddressingMode.ZERO_PAGE]: 0xe6,
+    [AddressingMode.ACCUMULATOR]: 0x1a,
+    [AddressingMode.ZERO_PAGE_X]: 0xf6,
+    [AddressingMode.ABSOLUTE_X]: 0xfe,
   },
-  INX: { [AddressingMode.IMPLIED]: 0xE8 },
-  INY: { [AddressingMode.IMPLIED]: 0xC8 },
+  INX: { [AddressingMode.IMPLIED]: 0xe8 },
+  INY: { [AddressingMode.IMPLIED]: 0xc8 },
   JMP: {
-    [AddressingMode.ABSOLUTE]: 0x4C,
-    [AddressingMode.INDIRECT]: 0x6C,
-    [AddressingMode.INDIRECT_ABS_X]: 0x7C // 65C02
+    [AddressingMode.ABSOLUTE]: 0x4c,
+    [AddressingMode.INDIRECT]: 0x6c,
+    [AddressingMode.INDIRECT_ABS_X]: 0x7c, // 65C02
   },
   JSR: { [AddressingMode.ABSOLUTE]: 0x20 },
   LDA: {
-    [AddressingMode.ABSOLUTE]: 0xAD,
-    [AddressingMode.ZERO_PAGE]: 0xA5,
-    [AddressingMode.IMMEDIATE]: 0xA9,
-    [AddressingMode.ZERO_PAGE_X]: 0xB5,
-    [AddressingMode.ABSOLUTE_X]: 0xBD,
-    [AddressingMode.ABSOLUTE_Y]: 0xB9,
-    [AddressingMode.INDIRECT_Y]: 0xB1,
-    [AddressingMode.INDIRECT_X]: 0xA1,
-    [AddressingMode.INDIRECT_ZP]: 0xB2
+    [AddressingMode.ABSOLUTE]: 0xad,
+    [AddressingMode.ZERO_PAGE]: 0xa5,
+    [AddressingMode.IMMEDIATE]: 0xa9,
+    [AddressingMode.ZERO_PAGE_X]: 0xb5,
+    [AddressingMode.ABSOLUTE_X]: 0xbd,
+    [AddressingMode.ABSOLUTE_Y]: 0xb9,
+    [AddressingMode.INDIRECT_Y]: 0xb1,
+    [AddressingMode.INDIRECT_X]: 0xa1,
+    [AddressingMode.INDIRECT_ZP]: 0xb2,
   },
   LDX: {
-    [AddressingMode.ABSOLUTE]: 0xAE,
-    [AddressingMode.ZERO_PAGE]: 0xA6,
-    [AddressingMode.IMMEDIATE]: 0xA2,
-    [AddressingMode.ZERO_PAGE_Y]: 0xB6,
-    [AddressingMode.ABSOLUTE_Y]: 0xBE
+    [AddressingMode.ABSOLUTE]: 0xae,
+    [AddressingMode.ZERO_PAGE]: 0xa6,
+    [AddressingMode.IMMEDIATE]: 0xa2,
+    [AddressingMode.ZERO_PAGE_Y]: 0xb6,
+    [AddressingMode.ABSOLUTE_Y]: 0xbe,
   },
   LDY: {
-    [AddressingMode.ABSOLUTE]: 0xAC,
-    [AddressingMode.ZERO_PAGE]: 0xA4,
-    [AddressingMode.IMMEDIATE]: 0xA0,
-    [AddressingMode.ZERO_PAGE_X]: 0xB4,
-    [AddressingMode.ABSOLUTE_X]: 0xBC
+    [AddressingMode.ABSOLUTE]: 0xac,
+    [AddressingMode.ZERO_PAGE]: 0xa4,
+    [AddressingMode.IMMEDIATE]: 0xa0,
+    [AddressingMode.ZERO_PAGE_X]: 0xb4,
+    [AddressingMode.ABSOLUTE_X]: 0xbc,
   },
   LSR: {
-    [AddressingMode.ABSOLUTE]: 0x4E,
+    [AddressingMode.ABSOLUTE]: 0x4e,
     [AddressingMode.ZERO_PAGE]: 0x46,
-    [AddressingMode.ACCUMULATOR]: 0x4A,
+    [AddressingMode.ACCUMULATOR]: 0x4a,
     [AddressingMode.ZERO_PAGE_X]: 0x56,
-    [AddressingMode.ABSOLUTE_X]: 0x5E
+    [AddressingMode.ABSOLUTE_X]: 0x5e,
   },
-  NOP: { [AddressingMode.IMPLIED]: 0xEA },
+  NOP: { [AddressingMode.IMPLIED]: 0xea },
   ORA: {
-    [AddressingMode.ABSOLUTE]: 0x0D,
+    [AddressingMode.ABSOLUTE]: 0x0d,
     [AddressingMode.ZERO_PAGE]: 0x05,
     [AddressingMode.IMMEDIATE]: 0x09,
     [AddressingMode.ZERO_PAGE_X]: 0x15,
-    [AddressingMode.ABSOLUTE_X]: 0x1D,
+    [AddressingMode.ABSOLUTE_X]: 0x1d,
     [AddressingMode.ABSOLUTE_Y]: 0x19,
     [AddressingMode.INDIRECT_Y]: 0x11,
     [AddressingMode.INDIRECT_X]: 0x01,
-    [AddressingMode.INDIRECT_ZP]: 0x12
+    [AddressingMode.INDIRECT_ZP]: 0x12,
   },
   PHA: { [AddressingMode.IMPLIED]: 0x48 },
   PHP: { [AddressingMode.IMPLIED]: 0x08 },
-  PHX: { [AddressingMode.IMPLIED]: 0xDA },
-  PHY: { [AddressingMode.IMPLIED]: 0x5A },
+  PHX: { [AddressingMode.IMPLIED]: 0xda },
+  PHY: { [AddressingMode.IMPLIED]: 0x5a },
   PLA: { [AddressingMode.IMPLIED]: 0x68 },
   PLP: { [AddressingMode.IMPLIED]: 0x28 },
-  PLX: { [AddressingMode.IMPLIED]: 0xFA },
-  PLY: { [AddressingMode.IMPLIED]: 0x7A },
+  PLX: { [AddressingMode.IMPLIED]: 0xfa },
+  PLY: { [AddressingMode.IMPLIED]: 0x7a },
   ROL: {
-    [AddressingMode.ABSOLUTE]: 0x2E,
+    [AddressingMode.ABSOLUTE]: 0x2e,
     [AddressingMode.ZERO_PAGE]: 0x26,
-    [AddressingMode.ACCUMULATOR]: 0x2A,
+    [AddressingMode.ACCUMULATOR]: 0x2a,
     [AddressingMode.ZERO_PAGE_X]: 0x36,
-    [AddressingMode.ABSOLUTE_X]: 0x3E
+    [AddressingMode.ABSOLUTE_X]: 0x3e,
   },
   ROR: {
-    [AddressingMode.ABSOLUTE]: 0x6E,
+    [AddressingMode.ABSOLUTE]: 0x6e,
     [AddressingMode.ZERO_PAGE]: 0x66,
-    [AddressingMode.ACCUMULATOR]: 0x6A,
+    [AddressingMode.ACCUMULATOR]: 0x6a,
     [AddressingMode.ZERO_PAGE_X]: 0x76,
-    [AddressingMode.ABSOLUTE_X]: 0x7E
+    [AddressingMode.ABSOLUTE_X]: 0x7e,
   },
   RTI: { [AddressingMode.IMPLIED]: 0x40 },
   RTS: { [AddressingMode.IMPLIED]: 0x60 },
   SBC: {
-    [AddressingMode.ABSOLUTE]: 0xED,
-    [AddressingMode.ZERO_PAGE]: 0xE5,
-    [AddressingMode.IMMEDIATE]: 0xE9,
-    [AddressingMode.ZERO_PAGE_X]: 0xF5,
-    [AddressingMode.ABSOLUTE_X]: 0xFD,
-    [AddressingMode.ABSOLUTE_Y]: 0xF9,
-    [AddressingMode.INDIRECT_Y]: 0xF1,
-    [AddressingMode.INDIRECT_X]: 0xE1,
-    [AddressingMode.INDIRECT_ZP]: 0xF2
+    [AddressingMode.ABSOLUTE]: 0xed,
+    [AddressingMode.ZERO_PAGE]: 0xe5,
+    [AddressingMode.IMMEDIATE]: 0xe9,
+    [AddressingMode.ZERO_PAGE_X]: 0xf5,
+    [AddressingMode.ABSOLUTE_X]: 0xfd,
+    [AddressingMode.ABSOLUTE_Y]: 0xf9,
+    [AddressingMode.INDIRECT_Y]: 0xf1,
+    [AddressingMode.INDIRECT_X]: 0xe1,
+    [AddressingMode.INDIRECT_ZP]: 0xf2,
   },
   SEC: { [AddressingMode.IMPLIED]: 0x38 },
-  SED: { [AddressingMode.IMPLIED]: 0xF8 },
+  SED: { [AddressingMode.IMPLIED]: 0xf8 },
   SEI: { [AddressingMode.IMPLIED]: 0x78 },
   STA: {
-    [AddressingMode.ABSOLUTE]: 0x8D,
+    [AddressingMode.ABSOLUTE]: 0x8d,
     [AddressingMode.ZERO_PAGE]: 0x85,
     [AddressingMode.ZERO_PAGE_X]: 0x95,
-    [AddressingMode.ABSOLUTE_X]: 0x9D,
+    [AddressingMode.ABSOLUTE_X]: 0x9d,
     [AddressingMode.ABSOLUTE_Y]: 0x99,
     [AddressingMode.INDIRECT_Y]: 0x91,
     [AddressingMode.INDIRECT_X]: 0x81,
-    [AddressingMode.INDIRECT_ZP]: 0x92
+    [AddressingMode.INDIRECT_ZP]: 0x92,
   },
   STX: {
-    [AddressingMode.ABSOLUTE]: 0x8E,
+    [AddressingMode.ABSOLUTE]: 0x8e,
     [AddressingMode.ZERO_PAGE]: 0x86,
-    [AddressingMode.ZERO_PAGE_Y]: 0x96
+    [AddressingMode.ZERO_PAGE_Y]: 0x96,
   },
   STY: {
-    [AddressingMode.ABSOLUTE]: 0x8C,
+    [AddressingMode.ABSOLUTE]: 0x8c,
     [AddressingMode.ZERO_PAGE]: 0x84,
-    [AddressingMode.ZERO_PAGE_X]: 0x94
+    [AddressingMode.ZERO_PAGE_X]: 0x94,
   },
-STZ: {
-    [AddressingMode.ABSOLUTE]: 0x9C, // 65C02
+  STZ: {
+    [AddressingMode.ABSOLUTE]: 0x9c, // 65C02
     [AddressingMode.ZERO_PAGE]: 0x64, // 65C02
     [AddressingMode.ZERO_PAGE_X]: 0x74, // 65C02
-    [AddressingMode.ABSOLUTE_X]: 0x9E // 65C02
+    [AddressingMode.ABSOLUTE_X]: 0x9e, // 65C02
   },
-  TAX: { [AddressingMode.IMPLIED]: 0xAA },
-  TAY: { [AddressingMode.IMPLIED]: 0xA8 },
+  TAX: { [AddressingMode.IMPLIED]: 0xaa },
+  TAY: { [AddressingMode.IMPLIED]: 0xa8 },
   TRB: {
-    [AddressingMode.ABSOLUTE]: 0x1C, // 65C02
-    [AddressingMode.ZERO_PAGE]: 0x14 // 65C02
+    [AddressingMode.ABSOLUTE]: 0x1c, // 65C02
+    [AddressingMode.ZERO_PAGE]: 0x14, // 65C02
   },
   TSB: {
-    [AddressingMode.ABSOLUTE]: 0x0C, // 65C02
-    [AddressingMode.ZERO_PAGE]: 0x04 // 65C02
+    [AddressingMode.ABSOLUTE]: 0x0c, // 65C02
+    [AddressingMode.ZERO_PAGE]: 0x04, // 65C02
   },
-  TSX: { [AddressingMode.IMPLIED]: 0xBA },
-  TXA: { [AddressingMode.IMPLIED]: 0x8A },
-  TXS: { [AddressingMode.IMPLIED]: 0x9A },
-  TYA: { [AddressingMode.IMPLIED]: 0x98 }
+  TSX: { [AddressingMode.IMPLIED]: 0xba },
+  TXA: { [AddressingMode.IMPLIED]: 0x8a },
+  TXS: { [AddressingMode.IMPLIED]: 0x9a },
+  TYA: { [AddressingMode.IMPLIED]: 0x98 },
 };
 
 // Instruction byte lengths by addressing mode
@@ -295,10 +295,13 @@ const MODE_SIZES: Record<AddressingMode, number> = {
   [AddressingMode.INDIRECT_Y]: 2,
   [AddressingMode.INDIRECT_ZP]: 2,
   [AddressingMode.RELATIVE]: 2,
-  [AddressingMode.INDIRECT_ABS_X]: 3
+  [AddressingMode.INDIRECT_ABS_X]: 3,
 };
 
-export function lookupOpcode(mnemonic: string, mode: AddressingMode): number | null {
+export function lookupOpcode(
+  mnemonic: string,
+  mode: AddressingMode,
+): number | null {
   const upperMnem = mnemonic.toUpperCase();
   const modes = OPCODE_TABLE[upperMnem];
   if (!modes) return null;

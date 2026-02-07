@@ -103,7 +103,7 @@ Port the 3-pass 6502 assembler core from vendor/EdAsm/EDASM.SRC/ASM/ to TypeScri
      1. Read ASM3.S EvalOprnd function (around line 20 in the file) to understand operand parsing
      2. Implement literal parsing (decimal, $hex, %binary)
      3. Implement symbol reference with symbol table lookup
-     4. Support arithmetic operators (+, -, *, /)
+     4. Support arithmetic operators (+, -, \*, /)
      5. Handle forward references gracefully (mark as undefined in pass 1)
      6. Return expression result with flags (relative, external, undefined)
      7. Write tests for various expression formats

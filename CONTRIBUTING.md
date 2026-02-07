@@ -85,12 +85,15 @@ export interface AssemblyOptions {
   origin?: number;
 }
 
-export function assemble(source: string, options: AssemblyOptions = {}): AssemblyResult {
+export function assemble(
+  source: string,
+  options: AssemblyOptions = {},
+): AssemblyResult {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
+
   // Implementation...
-  
+
   return {
     ok: true,
     errors,
@@ -98,8 +101,8 @@ export function assemble(source: string, options: AssemblyOptions = {}): Assembl
     artifacts: {
       objectBytes,
       listing,
-      symbols
-    }
+      symbols,
+    },
   };
 }
 ```
@@ -114,12 +117,15 @@ export function assemble(source: string, options: AssemblyOptions = {}): Assembl
 ```typescript
 /**
  * Assemble 6502 source code into object code.
- * 
+ *
  * @param source - Assembly source code
  * @param options - Assembly options
  * @returns Assembly result with object code and diagnostics
  */
-export function assemble(source: string, options: AssemblyOptions = {}): AssemblyResult {
+export function assemble(
+  source: string,
+  options: AssemblyOptions = {},
+): AssemblyResult {
   // Implementation...
 }
 ```
@@ -144,24 +150,24 @@ export function assemble(source: string, options: AssemblyOptions = {}): Assembl
 ### Writing Tests
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { assemble } from '../src/assembler';
+import { describe, it, expect } from "vitest";
+import { assemble } from "../src/assembler";
 
-describe('Feature Name', () => {
-  it('should do something specific', () => {
+describe("Feature Name", () => {
+  it("should do something specific", () => {
     const source = `
       ORG $8000
       LDA #$42
       RTS
     `;
-    
+
     const result = assemble(source, { origin: 0x8000 });
-    
+
     expect(result.ok).toBe(true);
     expect(result.artifacts?.objectBytes).toBeDefined();
-    
+
     const code = result.artifacts!.objectBytes!;
-    expect(code[0]).toBe(0xA9); // LDA immediate
+    expect(code[0]).toBe(0xa9); // LDA immediate
     expect(code[1]).toBe(0x42); // operand
     expect(code[2]).toBe(0x60); // RTS
   });

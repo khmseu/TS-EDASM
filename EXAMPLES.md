@@ -8,7 +8,7 @@
 # Create a simple program
 cat > hello.s << 'EOF'
         ORG $2000
-        
+
 START   LDX #0
 .LOOP   LDA MSG,X
         BEQ .DONE
@@ -61,16 +61,16 @@ Output:
 ```bash
 cat > 65c02demo.s << 'EOF'
         ORG $C000
-        
+
 ; Use 65C02 instructions
 START   STZ $00         ; Store zero
         BRA NEXT        ; Branch always
-        
+
 NEXT    PHX             ; Push X
         PHY             ; Push Y
-        
+
         ; Do something
-        
+
         PLY             ; Pull Y
         PLX             ; Pull X
         RTS
@@ -86,7 +86,7 @@ edasm asm 65c02demo.s --cpu 65C02 -o 65c02demo.obj
 cat > hiload.s << 'EOF'
 ; Program loaded at $8000
         ORG $8000
-        
+
 ENTRY   LDA #$00
         STA $C000
         RTS
@@ -115,18 +115,18 @@ Assembly successful: hiload.s.obj
         REL                 ; Relocatable
         EXT PRINT,GETKEY    ; External references
         ENT MAIN            ; Entry point
-        
+
         ORG $8000
-        
+
 MAIN    LDA #<GREETING
         STA $80
         LDA #>GREETING
         STA $81
         JSR PRINT
-        
+
         JSR GETKEY
         RTS
-        
+
 GREETING
         ASC "HELLO!"
         DB $00
@@ -137,9 +137,9 @@ GREETING
 ```assembly
         REL
         ENT PRINT,GETKEY
-        
+
         ORG $8000
-        
+
 ; Print null-terminated string at ($80)
 PRINT   LDY #0
 .LOOP   LDA ($80),Y

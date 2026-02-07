@@ -107,7 +107,7 @@ node test-runner.js
 
 1. Branch instruction detection
 2. Symbol value return type
-3. Special '*' symbol for PC
+3. Special '\*' symbol for PC
 4. EQU directive with expressions
 5. All 8 branch instructions
 
@@ -210,7 +210,7 @@ Add these tasks to `.vscode/tasks.json`:
   "command": "bash",
   "args": ["run-all-tests.sh"],
   "problemMatcher": "$tsc",
-  "group": {"kind": "test", "isDefault": true}
+  "group": { "kind": "test", "isDefault": true }
 }
 ```
 

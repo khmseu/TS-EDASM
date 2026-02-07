@@ -3,10 +3,10 @@
 
 LOGS_DIR="test_logs"
 
-if [ ! -d "$LOGS_DIR" ]; then
-  echo "No test_logs directory found. Run tests first with:"
-  echo "  bash run-all-tests.sh"
-  exit 1
+if [[ ! -d ${LOGS_DIR} ]]; then
+	echo "No test_logs directory found. Run tests first with:"
+	echo "  bash run-all-tests.sh"
+	exit 1
 fi
 
 echo "═══════════════════════════════════════════════════════"
@@ -17,7 +17,7 @@ echo ""
 # List all log files
 echo "Available test logs:"
 echo ""
-ls -lhS "$LOGS_DIR"/*.log 2>/dev/null | awk '{print $9, "(" $5 ")"}' | nl
+ls -lhS "${LOGS_DIR}"/*.log 2>/dev/null | awk '{print $9, "(" $5 ")"}' | nl
 
 echo ""
 echo "View specific log:"

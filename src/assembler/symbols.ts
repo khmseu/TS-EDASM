@@ -2,10 +2,10 @@
 // Based on EdAsm symbol table structure (linked list of nodes)
 
 export enum SymbolFlags {
-  UNDEFINED = 0x80,   // Symbol not yet defined
+  UNDEFINED = 0x80, // Symbol not yet defined
   UNREFERENCED = 0x01, // Symbol defined but not referenced
-  EXTERNAL = 0x10,     // External symbol (for linker)
-  RELOCATABLE = 0x08   // Value is relocatable
+  EXTERNAL = 0x10, // External symbol (for linker)
+  RELOCATABLE = 0x08, // Value is relocatable
 }
 
 export interface Symbol {
@@ -17,14 +17,14 @@ export interface Symbol {
 
 export class SymbolTable {
   private symbols: Map<string, Symbol>;
-  
+
   constructor() {
     this.symbols = new Map();
   }
-  
+
   define(name: string, value: number, relocatable = false): void {
     const existing = this.symbols.get(name.toUpperCase());
-    
+
     if (existing) {
       if (existing.defined) {
         throw new Error(`Duplicate symbol definition: ${name}`);
@@ -40,79 +40,83 @@ export class SymbolTable {
       if (relocatable) {
         flags |= SymbolFlags.RELOCATABLE;
       }
-      
+
       this.symbols.set(name.toUpperCase(), {
         name: name.toUpperCase(),
         value,
         flags,
-        defined: true
+        defined: true,
       });
     }
   }
-  
+
   defineExternal(name: string): void {
     const key = name.toUpperCase();
     const existing = this.symbols.get(key);
-    
-    if (existing && existing.defined && !(existing.flags & SymbolFlags.EXTERNAL)) {
+
+    if (
+      existing &&
+      existing.defined &&
+      !(existing.flags & SymbolFlags.EXTERNAL)
+    ) {
       throw new Error(`Symbol ${name} already defined as non-external`);
     }
-    
+
     // Mark as external - value will be resolved by linker
     this.symbols.set(key, {
       name: key,
       value: 0,
       flags: SymbolFlags.EXTERNAL,
-      defined: true // Mark as defined so it doesn't cause "undefined" errors
+      defined: true, // Mark as defined so it doesn't cause "undefined" errors
     });
   }
-  
+
   reference(name: string): Symbol {
     const key = name.toUpperCase();
     let symbol = this.symbols.get(key);
-    
+
     if (!symbol) {
       // Forward reference - create undefined symbol
       symbol = {
         name: key,
         value: 0,
         flags: SymbolFlags.UNDEFINED,
-        defined: false
+        defined: false,
       };
       this.symbols.set(key, symbol);
     } else {
       // Mark as referenced
       symbol.flags &= ~SymbolFlags.UNREFERENCED;
     }
-    
+
     return symbol;
   }
-  
+
   lookup(name: string): Symbol | undefined {
     return this.symbols.get(name.toUpperCase());
   }
-  
+
   get(name: string): number | undefined {
     const symbol = this.symbols.get(name.toUpperCase());
     return symbol?.value;
   }
-  
+
   has(name: string): boolean {
     return this.symbols.has(name.toUpperCase());
   }
-  
+
   getAll(): Symbol[] {
     return Array.from(this.symbols.values());
   }
-  
+
   clear(): void {
     this.symbols.clear();
   }
-  
+
   // Get sorted symbols for listing
   getSorted(): Symbol[] {
-    return Array.from(this.symbols.values()).sort((a, b) => 
-      a.name.localeCompare(b.name)
+    return Array.from(this.symbols.values()).sort((a, b) =>
+      a.name.localeCompare(b.name),
     );
   }
 }

@@ -65,19 +65,22 @@ npx edasm link module1.obj module2.obj -o program
 ### Library API
 
 ```typescript
-import { assemble, link } from 'ts-edasm';
+import { assemble, link } from "ts-edasm";
 
 // Assemble source code
-const result = assemble(`
+const result = assemble(
+  `
   ORG $8000
 START LDA #$42
   STA $C000
   RTS
-`, { listing: true });
+`,
+  { listing: true },
+);
 
 if (result.ok) {
-  console.log('Assembly successful');
-  console.log('Code:', result.artifacts?.objectBytes);
+  console.log("Assembly successful");
+  console.log("Code:", result.artifacts?.objectBytes);
 }
 
 // Link object files
