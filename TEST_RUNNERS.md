@@ -136,7 +136,7 @@ bash view-logs.sh
 
 All test logs are saved in the `test_logs/` directory with timestamp-based naming:
 
-```
+```text
 test_logs/
 ├── test_main_20260207_153042.log
 ├── test_vitest_20260207_153042.log

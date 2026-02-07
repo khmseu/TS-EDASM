@@ -2,6 +2,9 @@
 # Quick test runner with logging
 cd /bigdata/KAI/projects/TS-EDASM || exit 1
 
+# Ensure pipeline failures are reported
+set -o pipefail
+
 LOG_FILE="test_quick_$(date +%Y%m%d_%H%M%S).log"
 echo "Running quick tests with output to: ${LOG_FILE}"
 echo ""

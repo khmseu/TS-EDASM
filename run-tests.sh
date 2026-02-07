@@ -2,6 +2,8 @@
 # Test runner helper script
 
 set -e
+# Ensure pipeline failures are detected
+set -o pipefail
 
 # Create log file with timestamp
 LOG_FILE="test_output_$(date +%Y%m%d_%H%M%S).log"

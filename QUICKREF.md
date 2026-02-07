@@ -178,7 +178,7 @@ Human-readable assembly listing showing:
 
 Example:
 
-```
+```text
 8000  A9 42         LDA #$42
 8002  8D 00 C0      STA $C000
 8005  60            RTS
@@ -246,7 +246,7 @@ edasm link main.obj lib.obj -o program --origin 0x8000
 
 **Undefined Symbol:**
 
-```
+```text
 Line 10: Undefined symbol: UNKNOWN
 ```
 
@@ -254,7 +254,7 @@ _Solution:_ Define the symbol or add EXT directive for external symbol.
 
 **Invalid Opcode:**
 
-```
+```text
 Line 5: Unknown mnemonic: INVALID
 ```
 
@@ -262,7 +262,7 @@ _Solution:_ Check spelling and CPU type (6502 vs 65C02).
 
 **Branch Out of Range:**
 
-```
+```text
 Line 20: Branch target out of range (-130 bytes)
 ```
 
@@ -270,7 +270,7 @@ _Solution:_ Use JMP for long branches or reorganize code.
 
 **Duplicate Label:**
 
-```
+```text
 Line 15: Symbol 'LOOP' already defined at line 8
 ```
 
@@ -278,7 +278,7 @@ _Solution:_ Rename duplicate label or use local labels.
 
 **File Not Found:**
 
-```
+```text
 Error: Cannot read file: program.s
   ENOENT: no such file or directory
 ```

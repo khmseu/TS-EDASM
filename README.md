@@ -91,7 +91,7 @@ const linkResult = link([obj1, obj2], { origin: 0x8000 });
 
 Based on [PLAN.md](PLAN.md) and [AUDIT.md](AUDIT.md):
 
-```
+```text
 src/
 ├── assembler/
 │   ├── opcodes.ts      - 6502 opcode tables
@@ -143,7 +143,7 @@ See [tests/README.md](tests/README.md) for test structure and [tests/COVERAGE.md
 
 Since Linux doesn't support ProDOS file attributes (type, auxType), they're stored in hidden JSON files:
 
-```
+```text
 program.obj        # Object file
 .program.obj       # Attributes: {"fileType": 254, "auxType": 32768}
 ```

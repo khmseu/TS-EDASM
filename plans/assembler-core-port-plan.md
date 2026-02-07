@@ -1,8 +1,8 @@
-## Plan: Port Assembler Core from EdAsm ASM Module
+# Plan: Port Assembler Core from EdAsm ASM Module
 
 Port the 3-pass 6502 assembler core from vendor/EdAsm/EDASM.SRC/ASM/ to TypeScript, preserving the original table structures, lookup semantics, and control flow while adapting to modern TypeScript idioms and Node.js APIs.
 
-**Phases: 8**
+## Phases: 8
 
 1. **Phase 1: Port Constants and Flags**
    - **Objective:** Extract and port all assembler constants, flags, and enumerations from EQUATES.S and COMMONEQUS.S to TypeScript

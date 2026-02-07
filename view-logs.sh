@@ -3,6 +3,9 @@
 
 LOGS_DIR="test_logs"
 
+# Ensure pipeline failures are detected
+set -o pipefail
+
 if [[ ! -d ${LOGS_DIR} ]]; then
 	echo "No test_logs directory found. Run tests first with:"
 	echo "  bash run-all-tests.sh"
@@ -17,7 +20,7 @@ echo ""
 # List all log files
 echo "Available test logs:"
 echo ""
-ls -lhS "${LOGS_DIR}"/*.log 2>/dev/null | awk '{print $9, "(" $5 ")"}' | nl
+find "${LOGS_DIR}" -maxdepth 1 -type f -name "*.log" -printf '%f (%s bytes)\n' | nl
 
 echo ""
 echo "View specific log:"

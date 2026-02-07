@@ -2,6 +2,8 @@
 # Master test runner - runs tests and collects output to logs directory
 
 set -e
+# Ensure pipeline failures are detected
+set -o pipefail
 
 cd /bigdata/KAI/projects/TS-EDASM
 
@@ -35,10 +37,10 @@ run_test() {
 	local log_file="${3}"
 
 	echo "───────────────────────────────────────────────────────"
-	echo "Running: ${name}"
+	TMP_LOG=$(mktemp)
 	echo "Log file: ${log_file}"
 	echo "───────────────────────────────────────────────────────"
-
+	# shellcheck disable=SC2312
 	{
 		echo "═══════════════════════════════════════════════════════"
 		echo "TEST: ${name}"
@@ -52,9 +54,18 @@ run_test() {
 
 		echo ""
 		echo "Completed: $(date '+%Y-%m-%d %H:%M:%S')"
-	} 2>&1 | tee "${log_file}"
+	} >"${TMP_LOG}" 2>&1
 
-	echo "✓ Output saved to: ${log_file}"
+	# Show output and capture exit code
+	tee "${log_file}" <"${TMP_LOG}"
+	rc=$?
+	rm -f "${TMP_LOG}"
+	if [[ ${rc} -ne 0 ]]; then
+		echo "✗ Test ${name} failed with exit code ${rc}" | tee -a "${log_file}"
+		return "${rc}"
+	else
+		echo "✓ Output saved to: ${log_file}"
+	fi
 	echo ""
 }
 

@@ -70,7 +70,7 @@ The TypeScript port of EdAsm is **complete and ready for use**. All 5 planned ph
 
 ### File Count
 
-```
+```text
 src/
   assembler/     7 files (opcodes, tokenizer, symbols, expressions, passes)
   linker/        3 files (linker, REL format, types)

@@ -149,7 +149,7 @@ expect(result.errors[0]).toMatch(/regex/);
 
 All TypeScript changes compile without errors:
 
-```
+```bash
 npx tsc --noEmit
 ✓ No errors
 ```

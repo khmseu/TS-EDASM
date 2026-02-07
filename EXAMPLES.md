@@ -39,7 +39,7 @@ cat hello.s.obj.lst
 
 Output:
 
-```
+```text
 2000  A2 00         START   LDX #0
 2002  BD 0D 20      .LOOP   LDA MSG,X
 2005  F0 06                 BEQ .DONE
@@ -98,7 +98,7 @@ edasm asm hiload.s --origin 0x8000 -v
 
 Output:
 
-```
+```text
 Assembling: hiload.s
   Origin: $8000
 Object file written: hiload.s.obj (6 bytes)
@@ -169,7 +169,7 @@ edasm link main.obj io.obj -o program --origin 0x8000 -v
 
 Output:
 
-```
+```text
 Assembling: main.s
   Mode: Relocatable
 Object file written: main.obj (32 bytes)

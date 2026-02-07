@@ -34,7 +34,7 @@ npm run build
 
 ## Project Structure
 
-```
+```text
 TS-EDASM/
 ├── src/
 │   ├── assembler/          # Assembler implementation
@@ -243,7 +243,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 Examples:
 
-```
+```text
 feat: add support for MACRO directive
 fix: correct JMP indirect addressing mode
 docs: update CLI usage examples

@@ -4,6 +4,9 @@
 LOG_DIR="test_logs"
 mkdir -p "${LOG_DIR}"
 
+# Ensure pipeline failures are not masked
+set -o pipefail
+
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_FILE="${LOG_DIR}/test_${TIMESTAMP}.log"
 

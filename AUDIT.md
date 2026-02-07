@@ -64,7 +64,7 @@ EdAsm uses SWEET16 pseudo-instructions for 16-bit operations. We'll translate th
 
 ### Module Mapping
 
-```
+```text
 vendor/EdAsm/EDASM.SRC/
 ├── COMMONEQUS.S       → src/common/constants.ts
 ├── ASM/

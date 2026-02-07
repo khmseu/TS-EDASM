@@ -1,8 +1,8 @@
-## Plan: Bootstrap TypeScript Project with EdAsm Audit
+# Plan: Bootstrap TypeScript Project with EdAsm Audit
 
 This plan covers Phase 0 (Source Audit) and Phase 1 (TypeScript Skeleton) to establish the foundation for TS-EDASM. We'll clone the original EdAsm source for reference, audit it to identify assembler/linker code paths, scaffold a TypeScript project with proper tooling, and create initial placeholder modules.
 
-**Phases: 5**
+## Phases: 5
 
 1. **Phase 1: Clone and Verify EdAsm Reference**
    - **Objective:** Clone the EdAsm repository into vendor/EdAsm as a local reference for the implementation team
